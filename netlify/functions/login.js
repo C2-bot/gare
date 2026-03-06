@@ -1,6 +1,6 @@
 const crypto = require("crypto");
 
-const JWT_SECRET = process.env.JWT_SECRET || "c2group-gare-secret-2026";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 const USERS = [
   { email: "nicola.roli@c2group.it", password: "AnalisiBandi", nome: "Nicola Roli" },
