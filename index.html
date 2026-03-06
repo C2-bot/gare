@@ -972,7 +972,7 @@ function scaricaPdf(idx) {
 
       doc.setFont("helvetica", missing ? "italic" : "normal");
       doc.setFontSize(8);
-      doc.setTextColor(missing ? ...GRAY : 28, 43, 58);
+      if (missing) { doc.setTextColor(...GRAY); } else { doc.setTextColor(28, 43, 58); }
       doc.text(lines, ML + 64, y + 5);
       y += rowH;
     });
