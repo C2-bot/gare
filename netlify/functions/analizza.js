@@ -2,7 +2,7 @@ const Anthropic = require("@anthropic-ai/sdk");
 const pdf = require("pdf-parse");
 const crypto = require("crypto");
 
-const JWT_SECRET = process.env.JWT_SECRET || "c2group-gare-secret-2026";
+const JWT_SECRET = process.env.JWT_SECRET;
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 
 // Identici al prompt Python
