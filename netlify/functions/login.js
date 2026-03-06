@@ -13,7 +13,7 @@ function base64url(str) {
 
 function creaToken(payload) {
   const header  = base64url(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-  const body    = base64url(JSON.stringify({ ...payload, exp: Math.floor(Date.now()/1000) + 28800 }));
+  const body = base64url(JSON.stringify({ email: payload.email, nome: payload.nome, exp: Math.floor(Date.now()/1000) + 28800 }));
   const firma   = crypto.createHmac("sha256", JWT_SECRET)
                         .update(`${header}.${body}`).digest("base64")
                         .replace(/=/g,"").replace(/\+/g,"-").replace(/\//g,"_");
