@@ -69,7 +69,7 @@ async function chiamaApi(client, testo, blocco, totale) {
     : "";
 
   const response = await client.messages.create({
-    model: "claude-sonnet-4-5-20251001",
+    model: "claude-sonnet-4-5-20250514",
     max_tokens: 4096,
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: `Analizza il seguente Disciplinare di Gara:\n\n${contesto}${testo}` }],
