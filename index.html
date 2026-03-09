@@ -892,7 +892,7 @@ async function avviaAnalisi() {
     // 3. Analizza ogni blocco
     const risultati = [];
     for (let i = 0; i < blocchi.length; i++) {
-      if (i > 0) await new Promise(r => setTimeout(r, 70000));
+      if (i > 0) await new Promise(r => setTimeout(r, 45000));
       const dati = await chiamaApi(blocchi[i], i + 1, blocchi.length);
       risultati.push(dati);
     }
