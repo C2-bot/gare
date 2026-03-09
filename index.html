@@ -767,6 +767,10 @@ async function avviaAnalisi() {
       body: JSON.stringify({ pdf_base64: base64 }),
     });
 
+    const contentType = res.headers.get("content-type") || "";
+    if (!contentType.includes("application/json")) {
+      throw new Error("La funzione di analisi non è disponibile. Verificare il deploy su Netlify.");
+    }
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Errore sconosciuto");
 
@@ -791,8 +795,8 @@ async function avviaAnalisi() {
   } catch (e) {
     document.getElementById("main-area").innerHTML = `
       <div class="upload-wrapper">
-        <div class="alert-error">⚠️ ${e.message}</div>
-        <button class="btn-primary" onclick="mostraUpload()" style="max-width:200px">← Riprova</button>
+        <div class="alert-error">⚠️ Errore durante l'analisi: ${escHtml(e.message)}</div>
+        <button class="btn-primary" onclick="mostraUpload()" style="max-width:200px; margin-top:16px;">← Riprova</button>
       </div>`;
   }
 }
@@ -972,7 +976,7 @@ function scaricaPdf(idx) {
 
       doc.setFont("helvetica", missing ? "italic" : "normal");
       doc.setFontSize(8);
-      if (missing) { doc.setTextColor(...GRAY); } else { doc.setTextColor(28, 43, 58); }
+      doc.setTextColor(missing ? ...GRAY : 28, 43, 58);
       doc.text(lines, ML + 64, y + 5);
       y += rowH;
     });
