@@ -1,12 +1,12 @@
-const Anthropic = require("@anthropic-ai/sdk");
 const pdf = require("pdf-parse");
 const crypto = require("crypto");
 
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = process.env.JWT_SECRET || "c2group-analizzatore-secret-2026";
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const CLAUDE_MODEL = "claude-sonnet-4-5";
 
 // Identici al prompt Python
-const SYSTEM_PROMPT = `Sei un esperto analista di appalti pubblici italiani. 
+const SYSTEM_PROMPT = `Sei un esperto analista di appalti pubblici italiani.
 Analizza il Disciplinare di Gara fornito ed estrai esattamente i seguenti 23 campi in formato JSON.
 Per ogni campo non trovato nel documento, usa esattamente la stringa "Non specificato nel documento".
 Rispondi SOLO con il JSON, senza testo aggiuntivo, senza markdown, senza backtick.
@@ -41,49 +41,73 @@ Campi richiesti:
 const CHUNK_SIZE = 35_000;
 const NOT_FOUND = "Non specificato nel documento";
 
-function base64url(str) {
-  return Buffer.from(str).toString("base64")
-    .replace(/=/g,"").replace(/\+/g,"-").replace(/\//g,"_");
-}
-
 function verificaToken(event) {
   const auth = event.headers.authorization || event.headers.Authorization || "";
   if (!auth.startsWith("Bearer ")) return null;
   try {
-    const [header, body, firma] = auth.slice(7).split(".");
-    const attesa = crypto.createHmac("sha256", JWT_SECRET)
-                         .update(`${header}.${body}`).digest("base64")
-                         .replace(/=/g,"").replace(/\+/g,"-").replace(/\//g,"_");
-    if (firma !== attesa) return null;
-    const payload = JSON.parse(Buffer.from(body, "base64").toString());
-    if (payload.exp < Math.floor(Date.now()/1000)) return null;
+    const parts = auth.slice(7).split(".");
+    if (parts.length !== 3) return null;
+
+    const header = JSON.parse(Buffer.from(parts[0], "base64url").toString());
+    const payload = JSON.parse(Buffer.from(parts[1], "base64url").toString());
+
+    // Verifica scadenza
+    if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) return null;
+
+    // Verifica firma HMAC-SHA256
+    const signInput = parts[0] + "." + parts[1];
+    const expected = crypto
+      .createHmac("sha256", JWT_SECRET)
+      .update(signInput)
+      .digest("base64url");
+    if (expected !== parts[2]) return null;
+
     return payload;
   } catch {
     return null;
   }
 }
 
-async function chiamaApi(client, testo, blocco, totale) {
+async function chiamaApi(testo, blocco, totale) {
   const contesto = totale > 1
     ? `[Blocco ${blocco}/${totale} del documento. Estrai solo le info presenti in questo blocco.]\n\n`
     : "";
 
-  const response = await client.messages.create({
-    model: "claude-sonnet-4-5",
-    max_tokens: 4096,
-    system: SYSTEM_PROMPT,
-    messages: [{ role: "user", content: `Analizza il seguente Disciplinare di Gara:\n\n${contesto}${testo}` }],
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": ANTHROPIC_API_KEY,
+      "anthropic-version": "2023-06-01",
+    },
+    body: JSON.stringify({
+      model: CLAUDE_MODEL,
+      max_tokens: 4096,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: "user", content: `Analizza il seguente Disciplinare di Gara:\n\n${contesto}${testo}` }],
+    }),
   });
 
-  let raw = response.content[0].text.trim();
+  if (!response.ok) {
+    const errBody = await response.text();
+    throw new Error(`API Claude errore ${response.status}: ${errBody}`);
+  }
+
+  const result = await response.json();
+  let raw = result.content[0].text.trim();
   raw = raw.replace(/```json/g, "").replace(/```/g, "").trim();
   return JSON.parse(raw);
 }
 
 function unisciRisultati(lista) {
-  const campi = Object.keys(JSON.parse(
-    '{"nome_scuola_meccanografico":"","stazione_appaltante":"","oggetto_gara":"","cup_codice_progetto":"","numero_lotti":"","importo_totale":"","importo_per_lotto":"","procedura":"","criterio_aggiudicazione":"","inizio_procedura":"","scadenza_offerta":"","sopralluogo":"","garanzia_minima_obbligatoria":"","garanzia_criterio_premiale":"","fatturato_minimo":"","esperienze_pregresse":"","certificazioni":"","categorie_prodotti":"","marche_specifiche":"","subappalto":"","varianti":"","penali":"","note_aggiuntive":""}'
-  ));
+  const campi = [
+    "nome_scuola_meccanografico", "stazione_appaltante", "oggetto_gara",
+    "cup_codice_progetto", "numero_lotti", "importo_totale", "importo_per_lotto",
+    "procedura", "criterio_aggiudicazione", "inizio_procedura", "scadenza_offerta",
+    "sopralluogo", "garanzia_minima_obbligatoria", "garanzia_criterio_premiale",
+    "fatturato_minimo", "esperienze_pregresse", "certificazioni", "categorie_prodotti",
+    "marche_specifiche", "subappalto", "varianti", "penali", "note_aggiuntive"
+  ];
   const risultato = {};
   for (const key of campi) {
     for (const dati of lista) {
@@ -96,18 +120,8 @@ function unisciRisultati(lista) {
 }
 
 exports.handler = async (event) => {
-  const corsHeaders = {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  };
-
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers: corsHeaders, body: "" };
-  }
-
   if (event.httpMethod !== "POST") {
-    return { statusCode: 405, headers: corsHeaders, body: "Method Not Allowed" };
+    return { statusCode: 405, body: "Method Not Allowed" };
   }
 
   // Verifica autenticazione
@@ -146,7 +160,6 @@ exports.handler = async (event) => {
     }
 
     // Suddividi in blocchi se necessario
-    const client = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
     let blocchi = [];
     if (testo.length <= CHUNK_SIZE) {
       blocchi = [testo];
@@ -167,7 +180,7 @@ exports.handler = async (event) => {
     const risultati = [];
     for (let i = 0; i < blocchi.length; i++) {
       if (i > 0) await new Promise(r => setTimeout(r, 70000));
-      const dati = await chiamaApi(client, blocchi[i], i + 1, blocchi.length);
+      const dati = await chiamaApi(blocchi[i], i + 1, blocchi.length);
       risultati.push(dati);
     }
 
