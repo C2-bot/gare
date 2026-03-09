@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
   :root {
     --blue:    #1A3C6E;
@@ -177,7 +178,7 @@
     background: var(--white);
     border-radius: 16px;
     padding: 48px 44px;
-    width: 380px;
+    width: 420px;
     box-shadow: 0 24px 64px rgba(0,0,0,.3);
   }
   .login-logo {
@@ -228,6 +229,11 @@
     transition: border-color .2s;
   }
   .field input:focus { border-color: var(--blue); }
+  .field-hint {
+    font-size: 11px;
+    color: var(--gray);
+    margin-top: 4px;
+  }
   .btn-primary {
     width: 100%;
     padding: 12px;
@@ -507,12 +513,13 @@
     <div class="login-sub">Accedi con le tue credenziali C2 Group</div>
 
     <div class="field">
-      <label>Email</label>
-      <input type="email" id="login-email" placeholder="nome@c2group.it" autocomplete="username">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="Inserisci la password">
     </div>
     <div class="field">
-      <label>Password</label>
-      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+      <label>API Key Anthropic</label>
+      <input type="password" id="login-apikey" placeholder="sk-ant-...">
+      <div class="field-hint">Inserisci la chiave una sola volta, viene salvata nel browser.</div>
     </div>
     <button class="btn-primary" id="btn-login">Accedi</button>
     <div class="login-error" id="login-error"></div>
@@ -529,7 +536,6 @@
       <div class="header-title">C2 Group &nbsp;·&nbsp; <span>Analizzatore Disciplinari di Gara</span></div>
     </div>
     <div class="header-user">
-      <span id="header-nome"></span>
       <button class="btn-logout" id="btn-logout">Esci</button>
     </div>
   </header>
@@ -542,7 +548,7 @@
         <div class="sidebar-empty">Nessuna analisi ancora effettuata.</div>
       </div>
       <button class="btn-nuova" id="btn-nuova">
-        <span>＋</span> Nuova analisi
+        <span>+</span> Nuova analisi
       </button>
     </aside>
 
@@ -554,13 +560,52 @@
 
 <script>
 // ═══════════════════════════════════════════════════
+//  CONFIGURAZIONE
+// ═══════════════════════════════════════════════════
+const APP_PASSWORD = "AnalisiBandi";
+const CLAUDE_MODEL = "claude-sonnet-4-5";
+const CHUNK_SIZE = 35000;
+const NOT_FOUND = "Non specificato nel documento";
+
+const SYSTEM_PROMPT = `Sei un esperto analista di appalti pubblici italiani.
+Analizza il Disciplinare di Gara fornito ed estrai esattamente i seguenti 23 campi in formato JSON.
+Per ogni campo non trovato nel documento, usa esattamente la stringa "Non specificato nel documento".
+Rispondi SOLO con il JSON, senza testo aggiuntivo, senza markdown, senza backtick.
+
+Campi richiesti:
+{
+  "nome_scuola_meccanografico": "Nome completo dell'ente + codice meccanografico (es. ITC Marconi — PETD03000D) o codice fiscale per altri enti",
+  "stazione_appaltante": "Nome della stazione appaltante se diversa dall'ente",
+  "oggetto_gara": "Descrizione sintetica dell'oggetto della gara",
+  "cup_codice_progetto": "Codice CUP o codice progetto PNRR/PNC (es. B67H23000420006)",
+  "numero_lotti": "Numero di lotti in cui è suddivisa la gara (es. 1, 3, 'Lotto unico')",
+  "importo_totale": "Importo totale a base d'asta in euro (es. 150.000,00 €)",
+  "importo_per_lotto": "Importo per singolo lotto se suddivisa (es. Lotto 1: 50.000 €, Lotto 2: 100.000 €)",
+  "procedura": "Tipo di procedura (es. RDO MePA, Procedura aperta, Affidamento diretto)",
+  "criterio_aggiudicazione": "Criterio di aggiudicazione (es. Minor prezzo, OEPV)",
+  "inizio_procedura": "Data di pubblicazione o avvio procedura (gg/mm/aaaa)",
+  "scadenza_offerta": "Data e ora limite per presentazione offerta (es. 15/03/2026 ore 12:00)",
+  "sopralluogo": "Sopralluogo obbligatorio: si/no, e data se disponibile",
+  "garanzia_minima_obbligatoria": "Garanzia provvisoria minima obbligatoria richiesta (importo o percentuale)",
+  "garanzia_criterio_premiale": "Garanzia come criterio premiale/punteggio aggiuntivo se previsto",
+  "fatturato_minimo": "Fatturato minimo richiesto (es. 200.000 € negli ultimi 3 anni)",
+  "esperienze_pregresse": "Esperienze o forniture pregresse richieste come requisito",
+  "certificazioni": "Certificazioni richieste (es. ISO 9001, CAM, altro)",
+  "categorie_prodotti": "Categorie merceologiche o CPV dei prodotti/servizi richiesti",
+  "marche_specifiche": "Marche o modelli specifici citati (es. Google Workspace, Lenovo, Apple)",
+  "subappalto": "Subappalto ammesso: si/no e condizioni",
+  "varianti": "Varianti ammesse: si/no",
+  "penali": "Penali previste per inadempimento (importo o percentuale)",
+  "note_aggiuntive": "Altre informazioni rilevanti non coperte dai campi precedenti"
+}`;
+
+// ═══════════════════════════════════════════════════
 //  STATO APPLICAZIONE
 // ═══════════════════════════════════════════════════
 const state = {
-  token: null,
-  nome: null,
-  storico: [],       // [{ nomeFile, dati, pagine, ts }]
-  corrente: null,    // indice storico
+  apiKey: null,
+  storico: [],
+  corrente: null,
 };
 
 // ═══════════════════════════════════════════════════
@@ -602,62 +647,60 @@ const SEZIONI = [
   ]},
 ];
 
-const NOT_FOUND = "Non specificato nel documento";
+// ═══════════════════════════════════════════════════
+//  PDF.js worker
+// ═══════════════════════════════════════════════════
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
 // ═══════════════════════════════════════════════════
 //  LOGIN
 // ═══════════════════════════════════════════════════
+// Carica API key salvata se presente
+window.addEventListener("DOMContentLoaded", () => {
+  const saved = localStorage.getItem("c2_apikey");
+  if (saved) document.getElementById("login-apikey").value = saved;
+});
+
 document.getElementById("btn-login").addEventListener("click", doLogin);
 document.getElementById("login-password").addEventListener("keydown", e => {
   if (e.key === "Enter") doLogin();
 });
+document.getElementById("login-apikey").addEventListener("keydown", e => {
+  if (e.key === "Enter") doLogin();
+});
 
-async function doLogin() {
-  const email    = document.getElementById("login-email").value.trim();
+function doLogin() {
   const password = document.getElementById("login-password").value;
+  const apiKey   = document.getElementById("login-apikey").value.trim();
   const errEl    = document.getElementById("login-error");
-  const btn      = document.getElementById("btn-login");
 
   errEl.style.display = "none";
-  btn.disabled = true;
-  btn.textContent = "Accesso in corso…";
 
-  try {
-    const res = await fetch("/.netlify/functions/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await res.json();
-
-    if (!res.ok) {
-      errEl.textContent = data.error || "Errore di accesso";
-      errEl.style.display = "block";
-      return;
-    }
-
-    state.token = data.token;
-    state.nome  = data.nome;
-    document.getElementById("header-nome").textContent = data.nome;
-    document.getElementById("screen-login").classList.add("hidden");
-    document.getElementById("app-shell").classList.remove("hidden");
-    mostraUpload();
-
-  } catch (e) {
-    errEl.textContent = "Errore di rete. Riprovare.";
+  if (password !== APP_PASSWORD) {
+    errEl.textContent = "Password non valida.";
     errEl.style.display = "block";
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "Accedi";
+    return;
   }
+
+  if (!apiKey || !apiKey.startsWith("sk-")) {
+    errEl.textContent = "Inserisci una API key Anthropic valida (inizia con sk-).";
+    errEl.style.display = "block";
+    return;
+  }
+
+  state.apiKey = apiKey;
+  localStorage.setItem("c2_apikey", apiKey);
+
+  document.getElementById("screen-login").classList.add("hidden");
+  document.getElementById("app-shell").classList.remove("hidden");
+  mostraUpload();
 }
 
 // ═══════════════════════════════════════════════════
 //  LOGOUT / NUOVA ANALISI
 // ═══════════════════════════════════════════════════
 document.getElementById("btn-logout").addEventListener("click", () => {
-  state.token = null;
-  state.nome  = null;
+  state.apiKey = null;
   state.storico = [];
   state.corrente = null;
   document.getElementById("app-shell").classList.add("hidden");
@@ -684,22 +727,22 @@ function mostraUpload() {
       <div class="page-sub">Carica il PDF del Disciplinare di Gara per ottenere la scheda riepilogativa.</div>
 
       <div class="drop-zone" id="drop-zone">
-        <span class="drop-icon">📄</span>
+        <span class="drop-icon">&#128196;</span>
         <div class="drop-title">Trascina qui il PDF</div>
         <div class="drop-sub">oppure <span id="browse-link">seleziona dal computer</span></div>
         <input type="file" id="file-input" accept=".pdf">
       </div>
 
       <div class="file-selected" id="file-selected">
-        <div class="file-icon">📋</div>
+        <div class="file-icon">&#128203;</div>
         <div class="file-info">
           <div class="file-name" id="file-name"></div>
           <div class="file-size" id="file-size"></div>
         </div>
-        <button class="btn-remove" id="btn-remove">✕</button>
+        <button class="btn-remove" id="btn-remove">&#10005;</button>
       </div>
 
-      <button class="btn-analyze" id="btn-analyze">🔍 &nbsp;Analizza Disciplinare</button>
+      <button class="btn-analyze" id="btn-analyze">Analizza Disciplinare</button>
     </div>
   `;
 
@@ -721,8 +764,8 @@ function mostraUpload() {
     if (e.target.files[0]) impostaFile(e.target.files[0]);
   });
 
-  document.getElementById("btn-remove")?.addEventListener("click", rimuoviFile);
-  document.getElementById("btn-analyze")?.addEventListener("click", avviaAnalisi);
+  document.getElementById("btn-remove").addEventListener("click", rimuoviFile);
+  document.getElementById("btn-analyze").addEventListener("click", avviaAnalisi);
 }
 
 function impostaFile(file) {
@@ -746,6 +789,70 @@ function formatSize(bytes) {
 }
 
 // ═══════════════════════════════════════════════════
+//  ESTRAZIONE TESTO DA PDF (client-side con pdf.js)
+// ═══════════════════════════════════════════════════
+async function estraiTestoPdf(file) {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let testo = "";
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    const pageText = content.items.map(item => item.str).join(" ");
+    testo += pageText + "\n";
+  }
+  return { text: testo, numPages: pdf.numPages };
+}
+
+// ═══════════════════════════════════════════════════
+//  CHIAMATA API CLAUDE (diretta dal browser)
+// ═══════════════════════════════════════════════════
+async function chiamaApi(testo, blocco, totale) {
+  const contesto = totale > 1
+    ? `[Blocco ${blocco}/${totale} del documento. Estrai solo le info presenti in questo blocco.]\n\n`
+    : "";
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": state.apiKey,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true",
+    },
+    body: JSON.stringify({
+      model: CLAUDE_MODEL,
+      max_tokens: 4096,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: "user", content: "Analizza il seguente Disciplinare di Gara:\n\n" + contesto + testo }],
+    }),
+  });
+
+  if (!response.ok) {
+    const errBody = await response.text();
+    throw new Error("Errore API Claude (" + response.status + "): " + errBody);
+  }
+
+  const result = await response.json();
+  let raw = result.content[0].text.trim();
+  raw = raw.replace(/```json/g, "").replace(/```/g, "").trim();
+  return JSON.parse(raw);
+}
+
+function unisciRisultati(lista) {
+  const campi = SEZIONI.flatMap(s => s.campi.map(c => c[0]));
+  const risultato = {};
+  for (const key of campi) {
+    for (const dati of lista) {
+      const val = dati[key];
+      if (val && val !== NOT_FOUND) { risultato[key] = val; break; }
+    }
+    if (!risultato[key]) risultato[key] = NOT_FOUND;
+  }
+  return risultato;
+}
+
+// ═══════════════════════════════════════════════════
 //  ANALISI
 // ═══════════════════════════════════════════════════
 async function avviaAnalisi() {
@@ -755,36 +862,54 @@ async function avviaAnalisi() {
   mostraProcessing(nomeFile);
 
   try {
-    // Leggi come base64
-    const base64 = await fileToBase64(fileScelto);
+    // 1. Estrai testo dal PDF
+    const pdfData = await estraiTestoPdf(fileScelto);
+    const testo = pdfData.text;
 
-    const res = await fetch("/.netlify/functions/analizza", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${state.token}`,
-      },
-      body: JSON.stringify({ pdf_base64: base64 }),
-    });
-
-    const contentType = res.headers.get("content-type") || "";
-    if (!contentType.includes("application/json")) {
-      throw new Error("La funzione di analisi non è disponibile. Verificare il deploy su Netlify.");
+    if (!testo || testo.trim().length < 200) {
+      throw new Error("PDF non leggibile o testo troppo breve. Verificare che non sia un documento scansionato.");
     }
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Errore sconosciuto");
 
-    // Aggiorna step UI
-    setStep(2); setStep(3);
+    setStep(1);
 
-    // Salva in storico
+    // 2. Suddividi in blocchi se necessario
+    let blocchi = [];
+    if (testo.length <= CHUNK_SIZE) {
+      blocchi = [testo];
+    } else {
+      let inizio = 0;
+      while (inizio < testo.length) {
+        let fine = inizio + CHUNK_SIZE;
+        if (fine < testo.length) {
+          const finePara = testo.lastIndexOf("\n", fine);
+          if (finePara > inizio + CHUNK_SIZE / 2) fine = finePara;
+        }
+        blocchi.push(testo.slice(inizio, fine));
+        inizio = fine;
+      }
+    }
+
+    // 3. Analizza ogni blocco
+    const risultati = [];
+    for (let i = 0; i < blocchi.length; i++) {
+      if (i > 0) await new Promise(r => setTimeout(r, 70000));
+      const dati = await chiamaApi(blocchi[i], i + 1, blocchi.length);
+      risultati.push(dati);
+    }
+
+    const datiFinal = blocchi.length > 1 ? unisciRisultati(risultati) : risultati[0];
+
+    setStep(2);
+    setStep(3);
+
+    // 4. Salva in storico
     const voce = {
       nomeFile,
-      dati: data.dati,
-      pagine: data.pagine,
-      blocchi: data.blocchi,
+      dati: datiFinal,
+      pagine: pdfData.numPages,
+      blocchi: blocchi.length,
       ts: new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }),
-      compilati: Object.values(data.dati).filter(v => v !== NOT_FOUND).length,
+      compilati: Object.values(datiFinal).filter(v => v !== NOT_FOUND).length,
     };
     state.storico.unshift(voce);
     state.corrente = 0;
@@ -795,19 +920,10 @@ async function avviaAnalisi() {
   } catch (e) {
     document.getElementById("main-area").innerHTML = `
       <div class="upload-wrapper">
-        <div class="alert-error">⚠️ Errore durante l'analisi: ${escHtml(e.message)}</div>
-        <button class="btn-primary" onclick="mostraUpload()" style="max-width:200px; margin-top:16px;">← Riprova</button>
+        <div class="alert-error">Errore durante l'analisi: ${escHtml(e.message)}</div>
+        <button class="btn-primary" onclick="mostraUpload()" style="max-width:200px; margin-top:16px;">Riprova</button>
       </div>`;
   }
-}
-
-function fileToBase64(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(",")[1]);
-    r.onerror = () => rej(new Error("Lettura file fallita"));
-    r.readAsDataURL(file);
-  });
 }
 
 // ═══════════════════════════════════════════════════
@@ -821,30 +937,27 @@ function mostraProcessing(nomeFile) {
   document.getElementById("main-area").innerHTML = `
     <div class="processing-card">
       <div class="spinner"></div>
-      <div class="processing-title">Analisi in corso…</div>
+      <div class="processing-title">Analisi in corso...</div>
       <div class="processing-sub">
-        <strong>${nomeFile}</strong><br>
-        L'analisi può richiedere 1–3 minuti per documenti lunghi.
+        <strong>${escHtml(nomeFile)}</strong><br>
+        L'analisi puo richiedere 1-3 minuti per documenti lunghi.
       </div>
       <div class="progress-steps" id="progress-steps">
         ${STEPS.map((s, i) => `
           <div class="step ${i === 0 ? 'active' : ''}" id="step-${i}">
-            <div class="step-dot">${''}</div>
+            <div class="step-dot"></div>
             <span>${s}</span>
           </div>`).join("")}
       </div>
     </div>`;
-
-  // Simula avanzamento step 0→1 dopo 2s
-  setTimeout(() => setStep(1), 2000);
 }
 
 function setStep(idx) {
   for (let i = 0; i < idx; i++) {
-    const el = document.getElementById(`step-${i}`);
-    if (el) { el.className = "step done"; el.querySelector(".step-dot").textContent = "✓"; }
+    const el = document.getElementById("step-" + i);
+    if (el) { el.className = "step done"; el.querySelector(".step-dot").textContent = "\u2713"; }
   }
-  const curr = document.getElementById(`step-${idx}`);
+  const curr = document.getElementById("step-" + idx);
   if (curr) curr.className = "step active";
   stepCorrente = idx;
 }
@@ -867,7 +980,7 @@ function mostraRisultati(idx) {
           const missing = val === NOT_FOUND;
           return `<div class="field-row">
             <div class="field-label">${label}</div>
-            <div class="field-value ${missing ? 'missing' : ''}">${missing ? '—' : escHtml(val)}</div>
+            <div class="field-value ${missing ? 'missing' : ''}">${missing ? '\u2014' : escHtml(val)}</div>
           </div>`;
         }).join("")}
       </div>
@@ -880,11 +993,11 @@ function mostraRisultati(idx) {
         <div class="results-meta">
           ${pagine} pag. &nbsp;·&nbsp;
           <span>${compilati}/23 campi compilati</span> &nbsp;·&nbsp;
-          ${blocchi > 1 ? `${blocchi} blocchi` : "documento singolo"} &nbsp;·&nbsp;
+          ${blocchi > 1 ? blocchi + " blocchi" : "documento singolo"} &nbsp;·&nbsp;
           ore ${ts}
         </div>
       </div>
-      <button class="btn-download" onclick="scaricaPdf(${idx})">⬇ Scarica PDF Scheda</button>
+      <button class="btn-download" onclick="scaricaPdf(${idx})">Scarica PDF Scheda</button>
     </div>
     ${sezioniHtml}`;
 }
@@ -919,7 +1032,7 @@ function aggiornaHistoryUI() {
 function scaricaPdf(idx) {
   const { jsPDF } = window.jspdf;
   const voce  = state.storico[idx];
-  const { dati, nomeFile, compilati, ts } = voce;
+  const { dati, nomeFile, compilati } = voce;
   const doc   = new jsPDF({ orientation: "p", unit: "mm", format: "a4" });
   const W     = 210, ML = 18, MR = 18, TW = W - ML - MR;
   const BLUE  = [26, 60, 110];
@@ -928,7 +1041,7 @@ function scaricaPdf(idx) {
   let y = 18;
 
   // Header
-  doc.setFillColor(...BLUE);
+  doc.setFillColor(BLUE[0], BLUE[1], BLUE[2]);
   doc.rect(0, 0, W, 28, "F");
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "bold");
@@ -937,17 +1050,16 @@ function scaricaPdf(idx) {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
   doc.text("Scheda Analisi Disciplinare di Gara", ML, 19);
-  doc.text(`Elaborata il ${new Date().toLocaleDateString("it-IT")} · ${compilati}/23 campi`, ML, 25);
+  doc.text("Elaborata il " + new Date().toLocaleDateString("it-IT") + " - " + compilati + "/23 campi", ML, 25);
   y = 36;
 
   // Accent line
-  doc.setFillColor(...GOLD);
+  doc.setFillColor(GOLD[0], GOLD[1], GOLD[2]);
   doc.rect(ML, y-4, TW, 1.5, "F");
 
   SEZIONI.forEach(sez => {
-    // Section header
     if (y > 265) { doc.addPage(); y = 20; }
-    doc.setFillColor(...BLUE);
+    doc.setFillColor(BLUE[0], BLUE[1], BLUE[2]);
     doc.rect(ML, y, TW, 7, "F");
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
@@ -958,12 +1070,11 @@ function scaricaPdf(idx) {
     sez.campi.forEach(([key, label]) => {
       const val     = dati[key] || NOT_FOUND;
       const missing = val === NOT_FOUND;
-      const lines   = doc.splitTextToSize(missing ? "—" : val, TW - 68);
+      const lines   = doc.splitTextToSize(missing ? "\u2014" : val, TW - 68);
       const rowH    = Math.max(8, lines.length * 4.5 + 4);
 
       if (y + rowH > 282) { doc.addPage(); y = 20; }
 
-      // Label bg
       doc.setFillColor(247, 250, 253);
       doc.rect(ML, y, 62, rowH, "F");
       doc.setDrawColor(221, 227, 236);
@@ -971,12 +1082,16 @@ function scaricaPdf(idx) {
 
       doc.setFont("helvetica", "bold");
       doc.setFontSize(7.5);
-      doc.setTextColor(...BLUE);
+      doc.setTextColor(BLUE[0], BLUE[1], BLUE[2]);
       doc.text(label, ML + 2, y + 5);
 
       doc.setFont("helvetica", missing ? "italic" : "normal");
       doc.setFontSize(8);
-      doc.setTextColor(missing ? ...GRAY : 28, 43, 58);
+      if (missing) {
+        doc.setTextColor(GRAY[0], GRAY[1], GRAY[2]);
+      } else {
+        doc.setTextColor(28, 43, 58);
+      }
       doc.text(lines, ML + 64, y + 5);
       y += rowH;
     });
@@ -984,12 +1099,12 @@ function scaricaPdf(idx) {
   });
 
   // Footer
-  doc.setFillColor(...BLUE);
+  doc.setFillColor(BLUE[0], BLUE[1], BLUE[2]);
   doc.rect(0, 287, W, 10, "F");
   doc.setTextColor(255, 255, 255);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(7);
-  doc.text("C2 Group · Documento riservato ad uso interno", W / 2, 293, { align: "center" });
+  doc.text("C2 Group - Documento riservato ad uso interno", W / 2, 293, { align: "center" });
 
   doc.save(nomeFile.replace(".pdf", "_ANALISI.pdf"));
 }
