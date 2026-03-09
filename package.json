@@ -1,8 +1,0 @@
-{
-  "name": "c2group-analizzatore-disciplinari",
-  "version": "1.0.0",
-  "description": "C2 Group — Analizzatore Disciplinari di Gara",
-  "dependencies": {
-    "pdf-parse": "^1.1.1"
-  }
-}
