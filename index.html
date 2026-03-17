@@ -1549,6 +1549,7 @@ let archivioFiltrate = [];   // gare filtrate
 let archivioSelezionato = null;
 let confrontoSelezione = [];  // indici gare selezionate per confronto
 let tabCorrente = "sessione";
+let vistaArchivio = "overview"; // "overview" | "statistiche"
 
 function switchTab(tab) {
   tabCorrente = tab;
@@ -1768,7 +1769,8 @@ function filtraArchivio() {
 
   archivioSelezionato = null;
   mostraArchivioLista();
-  mostraArchivioOverview();
+  if (vistaArchivio === "statistiche") mostraStatistiche();
+  else mostraArchivioOverview();
 }
 
 function resetFiltri() {
@@ -1807,34 +1809,25 @@ function mostraArchivioLista() {
 }
 
 // ── MAIN AREA: OVERVIEW CON FILTRI E CARD ────────
-function mostraArchivioOverview() {
-  const main = document.getElementById("main-area");
-
-  // Costruisci opzioni filtri dai dati
+// ── PANNELLO FILTRI (riutilizzabile) ──────────────
+function generaFiltriHtml() {
   const criteriSet = new Set();
   const regioniSet = new Set();
   const provinceSet = new Set();
-  const lottiSet = new Set();
 
   for (const g of archivioData.gare) {
     const dati = archivioCache[g.id];
     if (!dati) continue;
-
     const c = (dati.criterio_aggiudicazione || "").toLowerCase();
     if (c && c !== NOT_FOUND.toLowerCase()) {
       if (c.includes("oepv") || c.includes("offerta economicamente")) criteriSet.add("OEPV");
       else if (c.includes("minor prezzo") || c.includes("prezzo pi")) criteriSet.add("Minor prezzo");
       else criteriSet.add(dati.criterio_aggiudicazione.slice(0, 40));
     }
-
     const loc = estraiLocalita(dati);
     if (loc) { regioniSet.add(loc.regione); provinceSet.add(loc.provincia); }
-
-    const nL = estraiNumeroLotti(dati);
-    if (nL) lottiSet.add(nL);
   }
 
-  // Leggi valori correnti filtri
   const filtroCrit   = document.getElementById("filtro-criterio")?.value || "";
   const filtroArea   = document.getElementById("filtro-area")?.value || "";
   const filtroFascia = document.getElementById("filtro-fascia")?.value || "";
@@ -1848,7 +1841,6 @@ function mostraArchivioOverview() {
     `<option value="${escHtml(v)}" ${sel === v ? "selected" : ""}>${escHtml(v)}</option>`
   ).join("");
 
-  // Province filtrate per regione selezionata
   let provFiltrate = provinceSet;
   if (filtroReg) {
     provFiltrate = new Set();
@@ -1856,6 +1848,82 @@ function mostraArchivioOverview() {
       if (reg === filtroReg && provinceSet.has(prov)) provFiltrate.add(prov);
     }
   }
+
+  return `<div class="filter-panel">
+    <div class="filter-row">
+      <div class="filter-group">
+        <div class="filter-label">Area Tematica</div>
+        <select class="filter-select" id="filtro-area" onchange="filtraArchivio()">
+          <option value="">Tutte</option>
+          <option value="Tecnologia" ${filtroArea==="Tecnologia"?"selected":""}>Tecnologia</option>
+          <option value="Arredi" ${filtroArea==="Arredi"?"selected":""}>Arredi</option>
+          <option value="Software" ${filtroArea==="Software"?"selected":""}>Software</option>
+          <option value="Formazione" ${filtroArea==="Formazione"?"selected":""}>Formazione</option>
+          <option value="Materiale Didattico" ${filtroArea==="Materiale Didattico"?"selected":""}>Materiale Didattico</option>
+          <option value="Consumabili" ${filtroArea==="Consumabili"?"selected":""}>Consumabili</option>
+          <option value="STEAM" ${filtroArea==="STEAM"?"selected":""}>STEAM</option>
+          <option value="Altro" ${filtroArea==="Altro"?"selected":""}>Altro</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Criterio Aggiudicazione</div>
+        <select class="filter-select" id="filtro-criterio" onchange="filtraArchivio()">
+          <option value="">Tutti</option>
+          ${mkOpts(criteriSet, filtroCrit)}
+        </select>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Fascia Importo</div>
+        <select class="filter-select" id="filtro-fascia" onchange="filtraArchivio()">
+          <option value="">Tutte</option>
+          ${FASCE_IMPORTO.map((f, i) => `<option value="${i}" ${filtroFascia===String(i)?"selected":""}>${f[0]}</option>`).join("")}
+        </select>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Numero Lotti</div>
+        <select class="filter-select" id="filtro-lotti" onchange="filtraArchivio()">
+          <option value="">Tutti</option>
+          <option value="1" ${filtroLotti==="1"?"selected":""}>Lotto unico</option>
+          <option value="2-3" ${filtroLotti==="2-3"?"selected":""}>2 - 3 lotti</option>
+          <option value="4-5" ${filtroLotti==="4-5"?"selected":""}>4 - 5 lotti</option>
+          <option value="6+" ${filtroLotti==="6+"?"selected":""}>&gt; 5 lotti</option>
+        </select>
+      </div>
+    </div>
+    <div class="filter-row">
+      <div class="filter-group">
+        <div class="filter-label">Regione</div>
+        <select class="filter-select" id="filtro-regione" onchange="filtraArchivio()">
+          <option value="">Tutte</option>
+          ${mkOpts(regioniSet, filtroReg)}
+        </select>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Provincia</div>
+        <select class="filter-select" id="filtro-provincia" onchange="filtraArchivio()">
+          <option value="">Tutte</option>
+          ${mkOpts(provFiltrate, filtroProv)}
+        </select>
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Elaborata dal</div>
+        <input type="date" class="filter-input" id="filtro-data-da" value="${filtroDa}" onchange="filtraArchivio()">
+      </div>
+      <div class="filter-group">
+        <div class="filter-label">Elaborata al</div>
+        <input type="date" class="filter-input" id="filtro-data-a" value="${filtroA}" onchange="filtraArchivio()">
+      </div>
+      <div class="filter-group" style="flex:0; min-width:auto;">
+        <div class="filter-label">&nbsp;</div>
+        <button class="btn-reset-filters" onclick="resetFiltri()">Reset</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function mostraArchivioOverview() {
+  vistaArchivio = "overview";
+  const main = document.getElementById("main-area");
 
   // Card per ogni gara filtrata
   const cardsHtml = archivioFiltrate.map(g => {
@@ -1896,76 +1964,7 @@ function mostraArchivioOverview() {
     <div class="page-heading">Archivio Gare</div>
     <div class="page-sub">Tutte le gare analizzate dalla pipeline automatica.</div>
 
-    <div class="filter-panel">
-      <div class="filter-row">
-        <div class="filter-group">
-          <div class="filter-label">Area Tematica</div>
-          <select class="filter-select" id="filtro-area" onchange="filtraArchivio()">
-            <option value="">Tutte</option>
-            <option value="Tecnologia" ${filtroArea==="Tecnologia"?"selected":""}>Tecnologia</option>
-            <option value="Arredi" ${filtroArea==="Arredi"?"selected":""}>Arredi</option>
-            <option value="Software" ${filtroArea==="Software"?"selected":""}>Software</option>
-            <option value="Formazione" ${filtroArea==="Formazione"?"selected":""}>Formazione</option>
-            <option value="Materiale Didattico" ${filtroArea==="Materiale Didattico"?"selected":""}>Materiale Didattico</option>
-            <option value="Consumabili" ${filtroArea==="Consumabili"?"selected":""}>Consumabili</option>
-            <option value="STEAM" ${filtroArea==="STEAM"?"selected":""}>STEAM</option>
-            <option value="Altro" ${filtroArea==="Altro"?"selected":""}>Altro</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <div class="filter-label">Criterio Aggiudicazione</div>
-          <select class="filter-select" id="filtro-criterio" onchange="filtraArchivio()">
-            <option value="">Tutti</option>
-            ${mkOpts(criteriSet, filtroCrit)}
-          </select>
-        </div>
-        <div class="filter-group">
-          <div class="filter-label">Fascia Importo</div>
-          <select class="filter-select" id="filtro-fascia" onchange="filtraArchivio()">
-            <option value="">Tutte</option>
-            ${FASCE_IMPORTO.map((f, i) => `<option value="${i}" ${filtroFascia===String(i)?"selected":""}>${f[0]}</option>`).join("")}
-          </select>
-        </div>
-        <div class="filter-group">
-          <div class="filter-label">Numero Lotti</div>
-          <select class="filter-select" id="filtro-lotti" onchange="filtraArchivio()">
-            <option value="">Tutti</option>
-            <option value="1" ${filtroLotti==="1"?"selected":""}>Lotto unico</option>
-            <option value="2-3" ${filtroLotti==="2-3"?"selected":""}>2 - 3 lotti</option>
-            <option value="4-5" ${filtroLotti==="4-5"?"selected":""}>4 - 5 lotti</option>
-            <option value="6+" ${filtroLotti==="6+"?"selected":""}>&gt; 5 lotti</option>
-          </select>
-        </div>
-      </div>
-      <div class="filter-row">
-        <div class="filter-group">
-          <div class="filter-label">Regione</div>
-          <select class="filter-select" id="filtro-regione" onchange="filtraArchivio()">
-            <option value="">Tutte</option>
-            ${mkOpts(regioniSet, filtroReg)}
-          </select>
-        </div>
-        <div class="filter-group">
-          <div class="filter-label">Provincia</div>
-          <select class="filter-select" id="filtro-provincia" onchange="filtraArchivio()">
-            <option value="">Tutte</option>
-            ${mkOpts(provFiltrate, filtroProv)}
-          </select>
-        </div>
-        <div class="filter-group">
-          <div class="filter-label">Elaborata dal</div>
-          <input type="date" class="filter-input" id="filtro-data-da" value="${filtroDa}" onchange="filtraArchivio()">
-        </div>
-        <div class="filter-group">
-          <div class="filter-label">Elaborata al</div>
-          <input type="date" class="filter-input" id="filtro-data-a" value="${filtroA}" onchange="filtraArchivio()">
-        </div>
-        <div class="filter-group" style="flex:0; min-width:auto;">
-          <div class="filter-label">&nbsp;</div>
-          <button class="btn-reset-filters" onclick="resetFiltri()">Reset</button>
-        </div>
-      </div>
-    </div>
+    ${generaFiltriHtml()}
 
     <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
       <div class="filter-count" style="margin-bottom:0;">${archivioFiltrate.length} di ${archivioData.gare.length} gare</div>
@@ -2143,6 +2142,7 @@ async function mostraDettaglioArchivio(idx) {
 const CHART_COLORS = ["#0074C5","#F55D3E","#31C192","#003E87","#FF9800","#7B1FA2","#E91E63","#607D8B"];
 
 function mostraStatistiche() {
+  vistaArchivio = "statistiche";
   const main = document.getElementById("main-area");
   const gare = archivioFiltrate || [];
 
@@ -2217,6 +2217,8 @@ function mostraStatistiche() {
       </div>
       <button class="btn-download" onclick="mostraArchivioOverview()">Torna all'archivio</button>
     </div>
+
+    ${generaFiltriHtml()}
 
     <div class="stats-summary">
       <div class="stats-kpi">
