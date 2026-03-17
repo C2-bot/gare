@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
   :root {
     --blue:    #003E87;
@@ -797,6 +798,22 @@
     color: var(--gray);
     font-size: 14px;
   }
+  .btn-export {
+    color: var(--blue-mid);
+    border: 1px solid var(--border);
+    background: var(--white);
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+    transition: all .2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-export:hover { background: var(--blue-mid); color: var(--white); }
 
   /* ── UTILS ─────────────────────────────────── */
   .hidden { display: none !important; }
@@ -1873,7 +1890,10 @@ function mostraArchivioOverview() {
       </div>
     </div>
 
-    <div class="filter-count">${archivioFiltrate.length} di ${archivioData.gare.length} gare</div>
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+      <div class="filter-count" style="margin-bottom:0;">${archivioFiltrate.length} di ${archivioData.gare.length} gare</div>
+      <button class="btn-export" onclick="esportaExcel()">Esporta Excel</button>
+    </div>
 
     ${archivioFiltrate.length > 0
       ? `<div class="archive-grid">${cardsHtml}</div>`
@@ -2035,6 +2055,51 @@ async function mostraDettaglioArchivio(idx) {
       <button class="btn-download" onclick="mostraArchivioOverview()">Torna all'archivio</button>
     </div>
     ${sezioniHtml}`;
+}
+
+// ═══════════════════════════════════════════════════
+//  EXPORT EXCEL (SheetJS)
+// ═══════════════════════════════════════════════════
+function esportaExcel() {
+  if (!archivioFiltrate || archivioFiltrate.length === 0) return;
+
+  // Tutti i campi della pipeline come colonne
+  const colonne = SEZIONI_PIPELINE.flatMap(sez => sez.campi);
+
+  // Header
+  const header = colonne.map(([key, label]) => label);
+  header.unshift("Data Elaborazione");
+  header.push("Provincia", "Regione");
+
+  // Righe dati
+  const righe = archivioFiltrate.map(g => {
+    const dati = archivioCache[g.id] || {};
+    const loc = estraiLocalita(dati);
+    const riga = colonne.map(([key]) => {
+      const val = dati[key];
+      return (!val || val === NOT_FOUND) ? "" : val;
+    });
+    riga.unshift(g.data_elaborazione);
+    riga.push(loc ? loc.provincia : "", loc ? loc.regione : "");
+    return riga;
+  });
+
+  // Crea workbook
+  const ws_data = [header, ...righe];
+  const ws = XLSX.utils.aoa_to_sheet(ws_data);
+
+  // Larghezze colonne auto
+  ws["!cols"] = header.map((h, i) => {
+    const maxLen = Math.max(h.length, ...righe.map(r => (r[i] || "").toString().length));
+    return { wch: Math.min(Math.max(maxLen, 12), 50) };
+  });
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Gare");
+
+  // Download
+  const data = new Date().toISOString().slice(0, 10);
+  XLSX.writeFile(wb, `C2Group_Archivio_Gare_${data}.xlsx`);
 }
 </script>
 </body>
