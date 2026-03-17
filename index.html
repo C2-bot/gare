@@ -697,6 +697,103 @@
   .filter-row + .filter-row {
     margin-top: 10px;
   }
+
+  /* ── CONFRONTO GARE ──────────────────────────── */
+  .gara-card-check {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    background: var(--white);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: transparent;
+    transition: all .15s;
+    z-index: 2;
+  }
+  .gara-card-check:hover { border-color: var(--blue-mid); }
+  .gara-card-check.checked {
+    background: var(--blue-mid);
+    border-color: var(--blue-mid);
+    color: var(--white);
+  }
+  .gara-card { position: relative; }
+  .btn-confronta {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--accent);
+    color: var(--white);
+    border: none;
+    border-radius: 12px;
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 6px 24px rgba(245,93,62,.4);
+    transition: all .2s;
+    z-index: 200;
+  }
+  .btn-confronta:hover { background: #7E0000; transform: translateY(-2px); }
+  .confronto-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .confronto-table th {
+    background: var(--blue);
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 12px 14px;
+    text-align: left;
+    position: sticky;
+    top: 60px;
+    z-index: 10;
+  }
+  .confronto-table th:first-child {
+    background: var(--blue);
+    min-width: 180px;
+  }
+  .confronto-section td {
+    background: var(--blue-mid);
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+  }
+  .confronto-table td {
+    padding: 10px 14px;
+    font-size: 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .confronto-table td:first-child {
+    font-weight: 600;
+    color: var(--blue);
+    background: var(--light-blue);
+    font-size: 11px;
+    min-width: 180px;
+  }
+  .confronto-table tr:hover td:not(:first-child) { background: var(--off); }
+  .confronto-table .missing-cell { color: var(--gray); font-style: italic; }
+
   .archive-empty {
     text-align: center;
     padding: 40px;
@@ -1382,6 +1479,7 @@ let archivioData = null;
 let archivioCache = {};      // id -> dati completi
 let archivioFiltrate = [];   // gare filtrate
 let archivioSelezionato = null;
+let confrontoSelezione = [];  // indici gare selezionate per confronto
 let tabCorrente = "sessione";
 
 function switchTab(tab) {
@@ -1695,9 +1793,11 @@ function mostraArchivioOverview() {
     const areeTags = aree.map(a => `<span class="gara-card-area">${a}</span>`).join("");
     const locTag = loc ? `<span class="gara-card-localita">${loc.provincia} (${loc.sigla})</span>` : "";
     const valoreTag = importoFmt ? `<span class="gara-card-valore">${importoFmt}</span>` : "";
+    const isChecked = confrontoSelezione.includes(origIdx);
 
     return `
     <div class="gara-card" onclick="mostraDettaglioArchivio(${origIdx})">
+      <div class="gara-card-check ${isChecked ? 'checked' : ''}" onclick="event.stopPropagation(); toggleConfronto(${origIdx})" title="Seleziona per confronto">${isChecked ? '\u2713' : ''}</div>
       <div class="gara-card-name">${escHtml(nome)}</div>
       ${criterio && criterio !== NOT_FOUND ? `<div class="gara-card-field"><strong>Criterio:</strong> ${escHtml(criterio.slice(0, 60))}</div>` : ""}
       ${scadenza && scadenza !== NOT_FOUND ? `<div class="gara-card-field"><strong>Scadenza:</strong> ${escHtml(scadenza.slice(0, 40))}</div>` : ""}
@@ -1791,7 +1891,96 @@ function mostraArchivioOverview() {
     ${archivioFiltrate.length > 0
       ? `<div class="archive-grid">${cardsHtml}</div>`
       : `<div class="archive-empty">Nessuna gara corrisponde ai filtri applicati.</div>`
+    }
+    ${confrontoSelezione.length >= 2
+      ? `<button class="btn-confronta" onclick="mostraConfronto()">Confronta ${confrontoSelezione.length} gare</button>`
+      : confrontoSelezione.length === 1
+        ? `<button class="btn-confronta" style="opacity:.5; cursor:default;">Seleziona almeno 2 gare</button>`
+        : ""
     }`;
+}
+
+// ── SELEZIONE E CONFRONTO GARE ───────────────────
+function toggleConfronto(origIdx) {
+  const pos = confrontoSelezione.indexOf(origIdx);
+  if (pos >= 0) {
+    confrontoSelezione.splice(pos, 1);
+  } else if (confrontoSelezione.length < 3) {
+    confrontoSelezione.push(origIdx);
+  }
+  mostraArchivioOverview();
+}
+
+function mostraConfronto() {
+  if (confrontoSelezione.length < 2) return;
+  const main = document.getElementById("main-area");
+
+  const gare = confrontoSelezione.map(idx => ({
+    gara: archivioData.gare[idx],
+    dati: archivioCache[archivioData.gare[idx].id] || {},
+  }));
+
+  // Header con nomi enti
+  const nomi = gare.map(g => {
+    const nome = (g.dati.nome_scuola_meccanografico || g.gara.nome_ente).split("\u2014")[0].split(",")[0].trim();
+    return nome.length > 30 ? nome.slice(0, 30) + "..." : nome;
+  });
+
+  // Tag riassuntivi per ogni gara nell'header
+  const headerTags = gare.map(g => {
+    const importo = estraiImporto(g.dati.valore_appalto);
+    const importoFmt = importo ? "\u20ac " + importo.toLocaleString("it-IT", {minimumFractionDigits: 0, maximumFractionDigits: 0}) : "";
+    const loc = estraiLocalita(g.dati);
+    const locStr = loc ? loc.provincia : "";
+    const aree = classificaAree(g.dati);
+    return { importoFmt, locStr, aree };
+  });
+
+  // Costruisci righe della tabella
+  let rowsHtml = "";
+  for (const sez of SEZIONI_PIPELINE) {
+    // Riga intestazione sezione
+    rowsHtml += `<tr class="confronto-section"><td colspan="${gare.length + 1}">${sez.titolo}</td></tr>`;
+
+    for (const [key, label] of sez.campi) {
+      rowsHtml += `<tr><td>${label}</td>`;
+      for (const g of gare) {
+        const val = g.dati[key] || NOT_FOUND;
+        const missing = val === NOT_FOUND;
+        rowsHtml += `<td class="${missing ? 'missing-cell' : ''}">${missing ? "\u2014" : escHtml(val)}</td>`;
+      }
+      rowsHtml += `</tr>`;
+    }
+  }
+
+  const colWidth = Math.floor(70 / gare.length);
+
+  main.innerHTML = `
+    <div class="results-header">
+      <div>
+        <div class="page-heading">Confronto Gare</div>
+        <div class="results-meta">${gare.length} gare selezionate</div>
+      </div>
+      <button class="btn-download" onclick="confrontoSelezione=[]; mostraArchivioOverview();">Torna all'archivio</button>
+    </div>
+
+    <table class="confronto-table">
+      <thead>
+        <tr>
+          <th style="width:30%;">Campo</th>
+          ${nomi.map((n, i) => `<th style="width:${colWidth}%;">
+            ${escHtml(n)}
+            <div style="font-weight:400; font-size:10px; margin-top:4px; opacity:.8;">
+              ${headerTags[i].importoFmt ? headerTags[i].importoFmt + ' \u00b7 ' : ''}${headerTags[i].locStr}
+              ${headerTags[i].aree.map(a => '<br>' + a).join('')}
+            </div>
+          </th>`).join("")}
+        </tr>
+      </thead>
+      <tbody>
+        ${rowsHtml}
+      </tbody>
+    </table>`;
 }
 
 // ── DETTAGLIO SINGOLA GARA ───────────────────────
