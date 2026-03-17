@@ -10,6 +10,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   :root {
     --blue:    #003E87;
@@ -864,6 +866,14 @@
     margin-top: 4px;
     text-transform: uppercase;
     letter-spacing: .05em;
+  }
+  .stats-card-full {
+    grid-column: 1 / -1;
+  }
+  .stats-card-full .map-container {
+    height: 420px;
+    border-radius: 8px;
+    overflow: hidden;
   }
 
   /* ── UTILS ─────────────────────────────────── */
@@ -2141,6 +2151,32 @@ async function mostraDettaglioArchivio(idx) {
 // ═══════════════════════════════════════════════════
 const CHART_COLORS = ["#0074C5","#F55D3E","#31C192","#003E87","#FF9800","#7B1FA2","#E91E63","#607D8B"];
 
+// Coordinate capoluoghi di provincia (lat, lng)
+const PROVINCE_COORDS = {
+  AG:[37.31,13.58],AL:[44.91,8.61],AN:[43.62,13.52],AO:[45.74,7.32],AP:[42.85,13.57],
+  AQ:[42.35,13.40],AR:[43.46,11.88],AT:[44.90,8.21],AV:[40.91,14.79],BA:[41.13,16.87],
+  BG:[45.69,9.67],BI:[45.56,8.05],BL:[46.14,12.22],BN:[41.13,14.78],BO:[44.49,11.34],
+  BR:[40.63,17.94],BS:[45.54,10.21],BT:[41.23,16.29],BZ:[46.50,11.35],CA:[39.22,9.12],
+  CB:[41.56,14.66],CE:[41.07,14.33],CH:[42.35,14.17],CL:[37.49,14.06],CN:[44.38,7.55],
+  CO:[45.81,9.08],CR:[45.13,10.02],CS:[39.30,16.25],CT:[37.50,15.09],CZ:[38.89,16.60],
+  EN:[37.57,14.27],FC:[44.22,12.04],FE:[44.84,11.62],FG:[41.46,15.55],FI:[43.77,11.25],
+  FM:[43.16,13.72],FR:[41.64,13.35],GE:[44.41,8.93],GO:[45.94,13.62],GR:[42.76,11.11],
+  IM:[43.89,8.04],IS:[41.59,14.23],KR:[39.08,17.13],LC:[45.85,9.39],LE:[40.35,18.17],
+  LI:[43.55,10.31],LO:[45.31,9.50],LT:[41.47,12.90],LU:[43.84,10.51],MB:[45.58,9.27],
+  MC:[43.30,13.45],ME:[38.19,15.55],MI:[45.46,9.19],MN:[45.16,10.79],MO:[44.65,10.92],
+  MS:[44.04,10.14],MT:[40.67,16.60],NA:[40.85,14.27],NO:[45.45,8.62],NU:[40.32,9.33],
+  OR:[39.91,8.59],PA:[38.12,13.36],PC:[44.83,9.50],PD:[45.41,11.88],PE:[42.46,14.21],
+  PG:[43.11,12.39],PI:[43.72,10.40],PN:[45.96,12.66],PO:[43.88,11.10],PR:[44.80,10.33],
+  PT:[43.93,10.92],PU:[43.91,12.91],PV:[45.18,9.16],PZ:[40.64,15.81],RA:[44.42,12.20],
+  RC:[38.11,15.65],RE:[44.70,10.63],RG:[36.93,14.73],RI:[42.40,12.86],RM:[41.90,12.50],
+  RN:[44.06,12.57],RO:[45.07,11.79],SA:[40.68,14.77],SI:[43.32,11.33],SO:[46.17,9.87],
+  SP:[44.11,9.82],SR:[37.07,15.29],SS:[40.73,8.56],SU:[39.50,8.86],SV:[44.31,8.48],
+  TA:[40.47,17.24],TE:[42.66,13.70],TN:[46.07,11.12],TO:[45.07,7.69],TP:[38.02,12.54],
+  TR:[42.56,12.64],TS:[45.65,13.78],TV:[45.67,12.24],UD:[46.06,13.24],VA:[45.82,8.83],
+  VB:[45.92,8.55],VC:[45.32,8.42],VE:[45.44,12.34],VI:[45.55,11.55],VR:[45.44,10.99],
+  VT:[42.42,12.11],VV:[38.68,16.10],
+};
+
 function mostraStatistiche() {
   vistaArchivio = "statistiche";
   const main = document.getElementById("main-area");
@@ -2260,6 +2296,10 @@ function mostraStatistiche() {
         <div class="stats-card-title">Distribuzione per regione</div>
         <canvas id="chart-regione"></canvas>
       </div>
+      <div class="stats-card stats-card-full">
+        <div class="stats-card-title">Mappa degli enti</div>
+        <div id="stats-map" class="map-container"></div>
+      </div>
     </div>`;
 
   // ── Render grafici ──
@@ -2293,6 +2333,66 @@ function mostraStatistiche() {
     data: { labels: regioniOrd.map(r => r[0]), datasets: [{ label: "Gare", data: regioniOrd.map(r => r[1]), backgroundColor: "#7B1FA2", borderRadius: 6 }] },
     options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } } }
   });
+
+  // ── Mappa Leaflet ──
+  const mapEl = document.getElementById("stats-map");
+  if (mapEl) {
+    const map = L.map("stats-map").setView([42.0, 12.5], 6);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: '&copy; OpenStreetMap',
+      maxZoom: 18,
+    }).addTo(map);
+
+    // Raggruppa gare per provincia
+    const gareProv = {};
+    gare.forEach(g => {
+      const dati = archivioCache[g.id] || {};
+      const loc = estraiLocalita(dati);
+      if (!loc) return;
+      if (!gareProv[loc.sigla]) gareProv[loc.sigla] = { loc, gare: [] };
+      gareProv[loc.sigla].gare.push({ g, dati });
+    });
+
+    const bounds = [];
+    for (const [sigla, info] of Object.entries(gareProv)) {
+      const coords = PROVINCE_COORDS[sigla];
+      if (!coords) continue;
+
+      const n = info.gare.length;
+      const radius = Math.max(8, Math.min(20, 8 + n * 4));
+
+      // Popup con elenco gare
+      const popupHtml = info.gare.map(({ g, dati }) => {
+        const nome = (dati.nome_scuola_meccanografico || g.nome_ente).split("\u2014")[0].split(",")[0].trim();
+        const imp = estraiImporto(dati.valore_appalto);
+        const impFmt = imp ? " \u2014 \u20ac " + Math.round(imp).toLocaleString("it-IT") : "";
+        return `<strong>${escHtml(nome.slice(0, 40))}</strong>${impFmt}`;
+      }).join("<br>");
+
+      const marker = L.circleMarker([coords[0], coords[1]], {
+        radius,
+        fillColor: "#0074C5",
+        color: "#003E87",
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 0.7,
+      }).addTo(map);
+
+      marker.bindPopup(`<div style="font-size:12px; max-width:280px;">
+        <strong style="color:#003E87;">${info.loc.provincia} (${sigla})</strong>
+        <span style="color:#5F6368;"> \u2014 ${n} gara${n > 1 ? "e" : ""}</span>
+        <hr style="margin:6px 0; border:none; border-top:1px solid #ddd;">
+        ${popupHtml}
+      </div>`);
+
+      bounds.push([coords[0], coords[1]]);
+    }
+
+    if (bounds.length > 0) {
+      if (bounds.length === 1) map.setView(bounds[0], 10);
+      else map.fitBounds(bounds, { padding: [30, 30] });
+    }
+  }
 }
 
 // ═══════════════════════════════════════════════════
