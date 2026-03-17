@@ -1,0 +1,68 @@
+{
+  "gare": [
+    {
+      "id": "20260312_Disciplinare-Gara_ISTITUTO-STATALE-DI-ISTRUZIONE-SUPERIORE-G-Salerno",
+      "nome_ente": "ISTITUTO STATALE DI ISTRUZIONE SUPERIORE 'G. Salerno' - Codice meccanografico: pais01700b - 90024 GANGI (PA)",
+      "data_elaborazione": "2026-03-12",
+      "valore_appalto": "Importo totale IVA esclusa: € 890.913,71 - LOTTO 1 (CIG BA2B7BC7E8): € 495.472,67 - LOTTO 2 (CIG BA2B7BD8BB): € 207.810,59 - LOTTO 3 (CIG BA2B7BE98E): € 187.730,45",
+      "scadenza_procedura": "18/03/2026 ore 14:00",
+      "campi_compilati": 15,
+      "file": "20260312_Disciplinare-Gara_ISTITUTO-STATALE-DI-ISTRUZIONE-SUPERIORE-G-Salerno.json"
+    },
+    {
+      "id": "20260312_Disciplinare-Gara_ISTITUTO-STATALE-ISTRUZIONE-SUPERIORE-A-VEGNI",
+      "nome_ente": "ISTITUTO STATALE ISTRUZIONE SUPERIORE A. VEGNI - CAPEZZINE 52044 CENTOIA - CORTONA (AR)",
+      "data_elaborazione": "2026-03-12",
+      "valore_appalto": "Euro 430.327,80 IVA esclusa - Lotto 1: Euro 92.300,00; Lotto 2: Euro 26.000,00; Lotto 3: Euro 10.700,00; Lotto 4: Euro 10.600,00; Lotto 5: Euro 54.000,00 (non oggetto di gara); Lotto 6: Euro 7.400,00; Lotto 7: Euro 25.100,00; Lotto 8: Euro 11.800,00; Lotto 9: Euro 23.000,00; Lotto 10: Euro 5.800,00; Lotto 11: Euro 56.667,80; Lotto 12: Euro 27.700,00; Lotto 13: Euro 19.100,00; Lotto 14: Euro 13.600,00; Lotto 15: Euro 21.000,00 (non oggetto di gara); Lotto 16: Euro 25.560,00 - CIG da piattaforma START per ogni lotto",
+      "scadenza_procedura": "15 giorni dalla pubblicazione della procedura",
+      "campi_compilati": 16,
+      "file": "20260312_Disciplinare-Gara_ISTITUTO-STATALE-ISTRUZIONE-SUPERIORE-A-VEGNI.json"
+    },
+    {
+      "id": "20260312_Disciplinare-Gara_ITIS-Galileo-Galilei",
+      "nome_ente": "I.T.I.S. 'Galileo Galilei' - Roma - Codice Meccanografico: RMTF090003",
+      "data_elaborazione": "2026-03-12",
+      "valore_appalto": "Valore complessivo appalto (totale 9 lotti): € 149.237,26 (IVA esclusa). Oneri sicurezza interferenze: € 0,00. CIG per lotto: Lotto 1 (Lab. 101) BAA1689174; Lotto 2 (Lab. 145) BAA168A247; Lotto 3 (Lab. 144) BAA168B31A; Lotto 4 (Lab. R25) BAA168C3ED; Lotto 5 (Lab. R21) BAA168D4C0; Lotto 6 (Lab. R04) BAA168E593; Lotto 7 (Lab. R23) BAA168F666; Lotto 8 (Lab. R24) BAA1690739; Lotto 9 (Lab. R14) BAA169180C",
+      "scadenza_procedura": "23 marzo 2026, ore 9:00",
+      "campi_compilati": 19,
+      "file": "20260312_Disciplinare-Gara_ITIS-Galileo-Galilei.json"
+    },
+    {
+      "id": "20260306_Disciplinare-Gara_IISS-NBERGESE",
+      "nome_ente": "IISS N.BERGESE - Codice Meccanografico: GEIS02300E - Via Giotto 10, 16153 Genova (GE) - C.F.: 95245910104",
+      "data_elaborazione": "2026-03-06",
+      "valore_appalto": "Importo complessivo: € 494.410,86 (IVA esclusa) suddiviso in: Lotto 1 (CIG BA3B878512): € 45.394,00; Lotto 2 (CIG BA3B8795E5): € 49.975,68; Lotto 3 (CIG BA3B87A6B8): € 117.961,16; Lotto 4 (CIG BA3B87B78B): € 86.000,00; Lotto 5 (CIG BA3B87C85E): € 102.396,93; Lotto 6 (CIG BA3B87D931): € 51.915,61; Lotto 7 (CIG BA3B87EA04): € 40.767,48. Costi sicurezza da interferenze: € 0,00 per tutti i lotti",
+      "scadenza_procedura": "Disponibile sulla piattaforma di gara",
+      "campi_compilati": 18,
+      "file": "20260306_Disciplinare-Gara_IISS-NBERGESE.json"
+    },
+    {
+      "id": "20260306_Disciplinare-Gara_Istituto-scolastico-con-codice-meccanografico-PETD",
+      "nome_ente": "Istituto scolastico con codice meccanografico PETD03000D",
+      "data_elaborazione": "2026-03-06",
+      "valore_appalto": "Importo complessivo € 140.041,00 oltre IVA - Lotto 1: € 70.020,49 oltre IVA al 22% - Lotto 2: € 70.020,49 oltre IVA al 22% - Oneri per la sicurezza: zero - CIG: Non specificato nel documento",
+      "scadenza_procedura": "15 giorni dalla pubblicazione sulla piattaforma MePA",
+      "campi_compilati": 14,
+      "file": "20260306_Disciplinare-Gara_Istituto-scolastico-con-codice-meccanografico-PETD.json"
+    },
+    {
+      "id": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI",
+      "nome_ente": "I.P.S.I.A. L.B. ALBERTI - Istituto Professionale Statale per l'Industria e l'Artigianato 'L.Battista Alberti' - Codice Meccanografico: RNRI010007",
+      "data_elaborazione": "2026-02-24",
+      "valore_appalto": "Importo complessivo: €154.000,00 IVA esclusa suddiviso in: Lotto 1 (CIG BA8D247B6C): €67.000,00 IVA esclusa; Lotto 2 (CIG BA8D248C3F): €52.000,00 IVA esclusa; Lotto 3 (CIG BA8D249D12): €35.000,00 IVA esclusa. Costi sicurezza da interferenze: €0,00 per tutti i lotti (fornitura senza posa in opera). Finanziamento: fondi PNRR D.M. 215/2024 Missione 4 – Componente 1 – Investimento 3.2 'Scuola 4.0'",
+      "scadenza_procedura": "Disponibile sulla piattaforma di gara; termine ultimo per sopralluogo: 5 marzo 2026",
+      "campi_compilati": 20,
+      "file": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI.json"
+    },
+    {
+      "id": "20260223_Disciplinare-Gara_ITIS-Ettore-Majorana-Cassino",
+      "nome_ente": "ITIS Ettore Majorana Cassino - Sede Centrale: Via S. Angelo, 2 (Loc. Folcara) - 03043 Cassino",
+      "data_elaborazione": "2026-02-23",
+      "valore_appalto": "Importo totale stimato: €430.274,56 (IVA esclusa). Dettaglio per lotto: Lotto 1: €82.246,11; Lotto 2: €81.967,21; Lotto 3: €40.983,60; Lotto 4: €655,74; Lotto 5: €327,87; Lotto 6: €16.393,44; Lotto 7: €6.967,21; Lotto 8: €80.327,86; Lotto 9: €57.377,04; Lotto 10: €21.840,00; Lotto 11: €27.336,03; Lotto 12: €12.295,08; Lotto 13: €1.557,37. Non sono previsti costi della manodopera trattandosi di fornitura di beni",
+      "scadenza_procedura": "Ore 10:00 del 09/03/2026",
+      "campi_compilati": 20,
+      "file": "20260223_Disciplinare-Gara_ITIS-Ettore-Majorana-Cassino.json"
+    }
+  ],
+  "ultimo_aggiornamento": "2026-03-17T10:35:10.303269"
+}
