@@ -481,6 +481,80 @@
     font-size: 12px;
   }
 
+  /* ── SIDEBAR TABS ─────────────────────────── */
+  .sidebar-tabs {
+    display: flex;
+    padding: 0 12px 12px;
+    gap: 4px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .sidebar-tab {
+    flex: 1;
+    padding: 8px 0;
+    border: none;
+    background: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--gray);
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all .15s;
+  }
+  .sidebar-tab:hover { background: var(--off); }
+  .sidebar-tab.active {
+    background: var(--light-blue);
+    color: var(--blue-mid);
+  }
+  .archive-item {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all .15s;
+  }
+  .archive-item:hover { background: var(--off); }
+  .archive-item.active { border-left-color: var(--blue-mid); background: var(--light-blue); }
+  .archive-item-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .archive-item-meta {
+    font-size: 11px;
+    color: var(--gray);
+    margin-top: 2px;
+  }
+  .archive-item-importo {
+    font-size: 11px;
+    color: var(--blue-mid);
+    font-weight: 500;
+    margin-top: 1px;
+  }
+  .sidebar-loading {
+    padding: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--gray);
+  }
+
+  /* ── ARCHIVIO MAIN ──────────────────────────── */
+  .archivio-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .archivio-count {
+    font-size: 13px;
+    color: var(--gray);
+  }
+
   /* ── UTILS ─────────────────────────────────── */
   .hidden { display: none !important; }
   .alert-error {
@@ -534,11 +608,21 @@
   </header>
 
   <div class="app">
-    <!-- Sidebar storico -->
+    <!-- Sidebar storico + archivio -->
     <aside class="sidebar">
-      <div class="sidebar-title">Storico sessione</div>
-      <div class="history-list" id="history-list">
-        <div class="sidebar-empty">Nessuna analisi ancora effettuata.</div>
+      <div class="sidebar-tabs">
+        <button class="sidebar-tab active" id="tab-sessione" onclick="switchTab('sessione')">Sessione</button>
+        <button class="sidebar-tab" id="tab-archivio" onclick="switchTab('archivio')">Archivio</button>
+      </div>
+      <div id="sidebar-sessione">
+        <div class="history-list" id="history-list">
+          <div class="sidebar-empty">Nessuna analisi ancora effettuata.</div>
+        </div>
+      </div>
+      <div id="sidebar-archivio" class="hidden">
+        <div class="history-list" id="archive-list">
+          <div class="sidebar-loading">Caricamento archivio...</div>
+        </div>
       </div>
       <button class="btn-nuova" id="btn-nuova">
         <span>+</span> Nuova analisi
@@ -1100,6 +1184,153 @@ function scaricaPdf(idx) {
   doc.text("C2 Group - Documento riservato ad uso interno", W / 2, 293, { align: "center" });
 
   doc.save(nomeFile.replace(".pdf", "_ANALISI.pdf"));
+}
+
+// ═══════════════════════════════════════════════════
+//  ARCHIVIO (dati da GitHub)
+// ═══════════════════════════════════════════════════
+const SEZIONI_PIPELINE = [
+  { titolo: "Identificazione", campi: [
+    ["nome_scuola_meccanografico", "Ente / Cod. Meccanografico"],
+    ["stazione_appaltante",       "Stazione Appaltante"],
+    ["piattaforma_pubblicazione", "Piattaforma di Pubblicazione"],
+    ["cup_codice_progetto",       "CUP / Codice Progetto"],
+  ]},
+  { titolo: "Date e Scadenze", campi: [
+    ["inizio_procedura",                "Inizio Procedura"],
+    ["scadenza_procedura",              "Scadenza Procedura"],
+    ["chiusura_richiesta_chiarimenti",  "Chiusura Rich. Chiarimenti"],
+    ["data_limite_consegna_beni",       "Data Limite Consegna"],
+  ]},
+  { titolo: "Condizioni di Gara", campi: [
+    ["criterio_aggiudicazione",              "Criterio Aggiudicazione"],
+    ["numero_lotti",                         "Numero Lotti"],
+    ["partecipazione_piu_lotti",             "Partecipazione a Piu Lotti"],
+    ["consegne_parziali",                    "Consegne Parziali"],
+    ["garanzia_provvisoria_definitiva_anac", "Garanzia Provv./Defin. ANAC"],
+  ]},
+  { titolo: "Requisiti Tecnici", campi: [
+    ["prestazioni_richieste",                      "Prestazioni Richieste"],
+    ["requisiti_capacita_tecnica_professionale",   "Requisiti Capacita Tecnica"],
+    ["certificazioni_beni",                        "Certificazioni Beni"],
+  ]},
+  { titolo: "Obblighi Post-Aggiudicazione", campi: [
+    ["garanzia_minima_obbligatoria",  "Garanzia Minima Obbligatoria"],
+    ["garanzia_come_criterio_premiale","Garanzia Criterio Premiale"],
+    ["assistenza",                    "Assistenza Tecnica"],
+    ["formazione",                    "Formazione"],
+    ["penali",                        "Penali"],
+    ["altri_servizi_richiesti",       "Altri Servizi / Obblighi"],
+    ["valore_appalto",                "Valore dell'Appalto"],
+  ]},
+];
+
+let archivioData = null;
+let archivioSelezionato = null;
+let tabCorrente = "sessione";
+
+function switchTab(tab) {
+  tabCorrente = tab;
+  document.getElementById("tab-sessione").classList.toggle("active", tab === "sessione");
+  document.getElementById("tab-archivio").classList.toggle("active", tab === "archivio");
+  document.getElementById("sidebar-sessione").classList.toggle("hidden", tab !== "sessione");
+  document.getElementById("sidebar-archivio").classList.toggle("hidden", tab !== "archivio");
+
+  if (tab === "archivio" && !archivioData) {
+    caricaArchivio();
+  }
+}
+
+async function caricaArchivio() {
+  const list = document.getElementById("archive-list");
+  list.innerHTML = '<div class="sidebar-loading">Caricamento archivio...</div>';
+
+  try {
+    const resp = await fetch("data/index.json");
+    if (!resp.ok) throw new Error("Archivio non ancora disponibile");
+    archivioData = await resp.json();
+    mostraArchivioLista();
+  } catch (e) {
+    list.innerHTML = `<div class="sidebar-empty">${escHtml(e.message)}</div>`;
+  }
+}
+
+function mostraArchivioLista() {
+  const list = document.getElementById("archive-list");
+  if (!archivioData || archivioData.gare.length === 0) {
+    list.innerHTML = '<div class="sidebar-empty">Nessuna gara in archivio.</div>';
+    return;
+  }
+
+  list.innerHTML = archivioData.gare.map((g, i) => {
+    const nome = g.nome_ente.split("—")[0].split(",")[0].trim();
+    const nomeCorto = nome.length > 35 ? nome.slice(0, 35) + "..." : nome;
+    return `
+    <div class="archive-item ${archivioSelezionato === i ? 'active' : ''}"
+         onclick="mostraDettaglioArchivio(${i})">
+      <div class="archive-item-name">${escHtml(nomeCorto)}</div>
+      <div class="archive-item-meta">${g.campi_compilati}/23 campi · ${g.data_elaborazione}</div>
+      ${g.valore_appalto && g.valore_appalto !== "N/D" ? `<div class="archive-item-importo">${escHtml(g.valore_appalto.slice(0, 50))}</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+async function mostraDettaglioArchivio(idx) {
+  archivioSelezionato = idx;
+  mostraArchivioLista();
+
+  const gara = archivioData.gare[idx];
+  const main = document.getElementById("main-area");
+
+  main.innerHTML = `
+    <div class="processing-card">
+      <div class="spinner"></div>
+      <div class="processing-title">Caricamento dati...</div>
+    </div>`;
+
+  try {
+    const resp = await fetch("data/gare/" + gara.file);
+    if (!resp.ok) throw new Error("Impossibile caricare i dati della gara");
+    const dati = await resp.json();
+
+    const compilati = Object.values(dati).filter(v => v !== NOT_FOUND).length;
+
+    const sezioniHtml = SEZIONI_PIPELINE.map(sez => `
+      <div class="section-card">
+        <div class="section-header">${sez.titolo}</div>
+        <div class="section-fields">
+          ${sez.campi.map(([key, label]) => {
+            const val = dati[key] || NOT_FOUND;
+            const missing = val === NOT_FOUND;
+            return `<div class="field-row">
+              <div class="field-label">${label}</div>
+              <div class="field-value ${missing ? 'missing' : ''}">${missing ? '\u2014' : escHtml(val)}</div>
+            </div>`;
+          }).join("")}
+        </div>
+      </div>`).join("");
+
+    const nomeEnte = (dati.nome_scuola_meccanografico || gara.nome_ente).split("—")[0].trim();
+
+    main.innerHTML = `
+      <div class="results-header">
+        <div>
+          <div class="page-heading">${escHtml(nomeEnte)}</div>
+          <div class="results-meta">
+            <span>${compilati}/23 campi compilati</span> &nbsp;·&nbsp;
+            Elaborata il ${gara.data_elaborazione} &nbsp;·&nbsp;
+            Fonte: pipeline automatica
+          </div>
+        </div>
+      </div>
+      ${sezioniHtml}`;
+
+  } catch (e) {
+    main.innerHTML = `
+      <div class="upload-wrapper">
+        <div class="alert-error">Errore: ${escHtml(e.message)}</div>
+      </div>`;
+  }
 }
 </script>
 </body>
