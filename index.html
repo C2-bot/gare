@@ -920,7 +920,8 @@ Campi richiesti:
   "subappalto": "Subappalto ammesso: si/no e condizioni",
   "varianti": "Varianti ammesse: si/no",
   "penali": "Penali previste per inadempimento (importo o percentuale)",
-  "note_aggiuntive": "Altre informazioni rilevanti non coperte dai campi precedenti"
+  "note_aggiuntive": "Altre informazioni rilevanti non coperte dai campi precedenti",
+  "aree_tematiche": "Classifica la gara in una o più delle seguenti categorie, SOLO se esplicitamente pertinenti al contenuto del documento: Tecnologia, Arredi, Software, Formazione, Materiale Didattico, Consumabili, STEAM, Altro. Separa con virgola se più di una. Se non è chiaro, indica Altro."
 }`;
 
 // ═══════════════════════════════════════════════════
@@ -968,6 +969,7 @@ const SEZIONI = [
     ["categorie_prodotti", "Categorie / CPV"],
     ["marche_specifiche",  "Marche / Modelli Specifici"],
     ["note_aggiuntive",    "Note Aggiuntive"],
+    ["aree_tematiche",     "Aree Tematiche"],
   ]},
 ];
 
@@ -1556,16 +1558,6 @@ const PROVINCE_REGIONE = {
   VT:["Viterbo","Lazio"],VV:["Vibo Valentia","Calabria"],
 };
 
-const AREE_TEMATICHE = [
-  ["Tecnologia", /monitor|computer|notebook|tablet|server|switch|access point|digital.?board|lim\b|display|touch|interattiv|stampant[ei]|proiettor|rete lan|fibra|cablaggio|chromebook|pc\b|workstation|firewall|ups\b|nas\b/i],
-  ["Arredi", /arred|banco|sedia|cattedra|armadio|scaffal|tavol|mobil|poltrona|libreria|espositore/i],
-  ["Software", /software|licenz|piattaforma|google workspace|microsoft 365|cloud|applicativ|gestional/i],
-  ["Formazione", /formazione|corso|training|docent|tutor|ore di formazione|aggiornamento/i],
-  ["Materiale Didattico", /didattic|laboratorio|kit\b|strument|microscopio|modell|attrezzatur/i],
-  ["Consumabili", /toner|cartuccia|consumabil|ricambio/i],
-  ["STEAM", /steam|stem|robotic|coding|stampante 3d|3d\b|realt. virtuale|realt. aumentata|drone|arduino|raspberry|maker/i],
-];
-
 const FASCE_IMPORTO = [
   ["< 50.000 \u20ac", 0, 50000],
   ["50.000 - 100.000 \u20ac", 50000, 100000],
@@ -1593,12 +1585,9 @@ function estraiLocalita(dati) {
 }
 
 function classificaAree(dati) {
-  const text = Object.values(dati).join(" ");
-  const aree = [];
-  for (const [nome, regex] of AREE_TEMATICHE) {
-    if (regex.test(text)) aree.push(nome);
-  }
-  return aree.length > 0 ? aree : ["Altro"];
+  const campo = dati.aree_tematiche;
+  if (!campo || campo === NOT_FOUND) return [];
+  return campo.split(",").map(a => a.trim()).filter(a => a.length > 0);
 }
 
 function estraiNumeroLotti(dati) {
