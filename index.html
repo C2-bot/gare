@@ -543,16 +543,130 @@
     color: var(--gray);
   }
 
-  /* ── ARCHIVIO MAIN ──────────────────────────── */
-  .archivio-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 24px;
+  /* ── ARCHIVE SEARCH ────────────────────────── */
+  .archive-search-wrap {
+    padding: 0 16px 12px;
   }
-  .archivio-count {
+  .archive-search {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    outline: none;
+    transition: border-color .2s;
+  }
+  .archive-search:focus { border-color: var(--blue-mid); }
+  .archive-search::placeholder { color: var(--gray); }
+
+  /* ── FILTER PANEL ─────────────────────────── */
+  .filter-panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .filter-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 170px;
+  }
+  .filter-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--gray);
+  }
+  .filter-select, .filter-input {
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: Arial, sans-serif;
+    color: var(--text);
+    background: var(--white);
+    outline: none;
+  }
+  .filter-select:focus, .filter-input:focus { border-color: var(--blue-mid); }
+  .btn-reset-filters {
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--white);
+    color: var(--gray);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    transition: all .15s;
+  }
+  .btn-reset-filters:hover { background: var(--off); color: var(--text); }
+
+  /* ── ARCHIVE GRID ─────────────────────────── */
+  .filter-count {
     font-size: 13px;
     color: var(--gray);
+    margin-bottom: 16px;
+  }
+  .archive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .gara-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .gara-card:hover {
+    border-color: var(--blue-mid);
+    box-shadow: 0 4px 12px rgba(0,116,197,.12);
+  }
+  .gara-card-name {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--blue);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .gara-card-field {
+    font-size: 12px;
+    color: var(--gray);
+    margin-top: 4px;
+  }
+  .gara-card-field strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .gara-card-badge {
+    display: inline-block;
+    background: var(--light-blue);
+    color: var(--blue-mid);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-top: 10px;
+  }
+  .archive-empty {
+    text-align: center;
+    padding: 40px;
+    color: var(--gray);
+    font-size: 14px;
   }
 
   /* ── UTILS ─────────────────────────────────── */
@@ -620,6 +734,10 @@
         </div>
       </div>
       <div id="sidebar-archivio" class="hidden">
+        <div class="archive-search-wrap">
+          <input type="text" class="archive-search" id="archive-search"
+                 placeholder="Cerca ente, importo, criterio..." oninput="filtraArchivio()">
+        </div>
         <div class="history-list" id="archive-list">
           <div class="sidebar-loading">Caricamento archivio...</div>
         </div>
@@ -1226,6 +1344,8 @@ const SEZIONI_PIPELINE = [
 ];
 
 let archivioData = null;
+let archivioCache = {};      // id -> dati completi
+let archivioFiltrate = [];   // gare filtrate
 let archivioSelezionato = null;
 let tabCorrente = "sessione";
 
@@ -1236,8 +1356,12 @@ function switchTab(tab) {
   document.getElementById("sidebar-sessione").classList.toggle("hidden", tab !== "sessione");
   document.getElementById("sidebar-archivio").classList.toggle("hidden", tab !== "archivio");
 
-  if (tab === "archivio" && !archivioData) {
-    caricaArchivio();
+  if (tab === "archivio") {
+    if (!archivioData) {
+      caricaArchivio();
+    } else {
+      mostraArchivioOverview();
+    }
   }
 }
 
@@ -1249,32 +1373,177 @@ async function caricaArchivio() {
     const resp = await fetch("data/index.json");
     if (!resp.ok) throw new Error("Archivio non ancora disponibile");
     archivioData = await resp.json();
+
+    // Carica tutti i JSON in parallelo per ricerca full-text
+    await Promise.all(archivioData.gare.map(async g => {
+      try {
+        const r = await fetch("data/gare/" + g.file);
+        if (r.ok) archivioCache[g.id] = await r.json();
+      } catch (_) {}
+    }));
+
+    archivioFiltrate = [...archivioData.gare];
     mostraArchivioLista();
+    mostraArchivioOverview();
   } catch (e) {
     list.innerHTML = `<div class="sidebar-empty">${escHtml(e.message)}</div>`;
   }
 }
 
+// ── RICERCA E FILTRI ─────────────────────────────
+function filtraArchivio() {
+  if (!archivioData) return;
+
+  const searchText = (document.getElementById("archive-search")?.value || "").toLowerCase().trim();
+  const filtroCrit = document.getElementById("filtro-criterio")?.value || "";
+  const filtroDa   = document.getElementById("filtro-data-da")?.value || "";
+  const filtroA    = document.getElementById("filtro-data-a")?.value || "";
+
+  archivioFiltrate = archivioData.gare.filter(g => {
+    // Full-text search su tutti i campi
+    if (searchText) {
+      const dati = archivioCache[g.id];
+      if (dati) {
+        const allText = Object.values(dati).join(" ").toLowerCase();
+        if (!allText.includes(searchText)) return false;
+      } else {
+        if (!g.nome_ente.toLowerCase().includes(searchText)) return false;
+      }
+    }
+
+    // Filtro criterio aggiudicazione
+    if (filtroCrit) {
+      const dati = archivioCache[g.id];
+      const criterio = (dati?.criterio_aggiudicazione || "").toLowerCase();
+      if (filtroCrit === "OEPV" && !criterio.includes("oepv") && !criterio.includes("offerta economicamente")) return false;
+      if (filtroCrit === "Minor prezzo" && !criterio.includes("minor prezzo") && !criterio.includes("prezzo pi")) return false;
+      if (filtroCrit !== "OEPV" && filtroCrit !== "Minor prezzo" && !criterio.includes(filtroCrit.toLowerCase())) return false;
+    }
+
+    // Filtro range date elaborazione
+    if (filtroDa && g.data_elaborazione < filtroDa) return false;
+    if (filtroA && g.data_elaborazione > filtroA) return false;
+
+    return true;
+  });
+
+  archivioSelezionato = null;
+  mostraArchivioLista();
+  mostraArchivioOverview();
+}
+
+function resetFiltri() {
+  const s = document.getElementById("archive-search"); if (s) s.value = "";
+  const c = document.getElementById("filtro-criterio"); if (c) c.value = "";
+  const d = document.getElementById("filtro-data-da"); if (d) d.value = "";
+  const a = document.getElementById("filtro-data-a"); if (a) a.value = "";
+  filtraArchivio();
+}
+
+// ── SIDEBAR: LISTA ARCHIVIO FILTRATA ─────────────
 function mostraArchivioLista() {
   const list = document.getElementById("archive-list");
-  if (!archivioData || archivioData.gare.length === 0) {
-    list.innerHTML = '<div class="sidebar-empty">Nessuna gara in archivio.</div>';
+  if (!archivioFiltrate || archivioFiltrate.length === 0) {
+    list.innerHTML = '<div class="sidebar-empty">Nessuna gara trovata.</div>';
     return;
   }
 
-  list.innerHTML = archivioData.gare.map((g, i) => {
-    const nome = g.nome_ente.split("—")[0].split(",")[0].trim();
+  list.innerHTML = archivioFiltrate.map((g, fi) => {
+    const origIdx = archivioData.gare.indexOf(g);
+    const nome = g.nome_ente.split("\u2014")[0].split(",")[0].trim();
     const nomeCorto = nome.length > 35 ? nome.slice(0, 35) + "..." : nome;
     return `
-    <div class="archive-item ${archivioSelezionato === i ? 'active' : ''}"
-         onclick="mostraDettaglioArchivio(${i})">
+    <div class="archive-item ${archivioSelezionato === origIdx ? 'active' : ''}"
+         onclick="mostraDettaglioArchivio(${origIdx})">
       <div class="archive-item-name">${escHtml(nomeCorto)}</div>
-      <div class="archive-item-meta">${g.campi_compilati}/23 campi · ${g.data_elaborazione}</div>
+      <div class="archive-item-meta">${g.campi_compilati}/23 campi \u00b7 ${g.data_elaborazione}</div>
       ${g.valore_appalto && g.valore_appalto !== "N/D" ? `<div class="archive-item-importo">${escHtml(g.valore_appalto.slice(0, 50))}</div>` : ""}
     </div>`;
   }).join("");
 }
 
+// ── MAIN AREA: OVERVIEW CON FILTRI E CARD ────────
+function mostraArchivioOverview() {
+  const main = document.getElementById("main-area");
+
+  // Costruisci opzioni filtro criterio dai dati
+  const criteriSet = new Set();
+  for (const g of archivioData.gare) {
+    const dati = archivioCache[g.id];
+    const c = (dati?.criterio_aggiudicazione || "").toLowerCase();
+    if (c && c !== NOT_FOUND.toLowerCase()) {
+      if (c.includes("oepv") || c.includes("offerta economicamente")) criteriSet.add("OEPV");
+      else if (c.includes("minor prezzo") || c.includes("prezzo pi")) criteriSet.add("Minor prezzo");
+      else criteriSet.add(dati.criterio_aggiudicazione.slice(0, 40));
+    }
+  }
+
+  const filtroCrit = document.getElementById("filtro-criterio")?.value || "";
+  const filtroDa   = document.getElementById("filtro-data-da")?.value || "";
+  const filtroA    = document.getElementById("filtro-data-a")?.value || "";
+
+  const criteriOpts = Array.from(criteriSet).sort().map(c =>
+    `<option value="${escHtml(c)}" ${filtroCrit === c ? 'selected' : ''}>${escHtml(c)}</option>`
+  ).join("");
+
+  // Card per ogni gara filtrata
+  const cardsHtml = archivioFiltrate.map(g => {
+    const origIdx = archivioData.gare.indexOf(g);
+    const dati = archivioCache[g.id] || {};
+    const nome = (dati.nome_scuola_meccanografico || g.nome_ente).split("\u2014")[0].split(",")[0].trim();
+    const criterio = dati.criterio_aggiudicazione || "";
+    const valore = dati.valore_appalto || g.valore_appalto || "";
+    const scadenza = dati.scadenza_procedura || g.scadenza_procedura || "";
+    const lotti = dati.numero_lotti || "";
+
+    return `
+    <div class="gara-card" onclick="mostraDettaglioArchivio(${origIdx})">
+      <div class="gara-card-name">${escHtml(nome)}</div>
+      ${valore && valore !== NOT_FOUND ? `<div class="gara-card-field"><strong>Valore:</strong> ${escHtml(valore.slice(0, 80))}</div>` : ""}
+      ${criterio && criterio !== NOT_FOUND ? `<div class="gara-card-field"><strong>Criterio:</strong> ${escHtml(criterio.slice(0, 60))}</div>` : ""}
+      ${scadenza && scadenza !== NOT_FOUND ? `<div class="gara-card-field"><strong>Scadenza:</strong> ${escHtml(scadenza.slice(0, 40))}</div>` : ""}
+      ${lotti && lotti !== NOT_FOUND ? `<div class="gara-card-field"><strong>Lotti:</strong> ${escHtml(lotti.slice(0, 30))}</div>` : ""}
+      <div class="gara-card-badge">${g.campi_compilati}/23 campi \u00b7 ${g.data_elaborazione}</div>
+    </div>`;
+  }).join("");
+
+  main.innerHTML = `
+    <div class="page-heading">Archivio Gare</div>
+    <div class="page-sub">Tutte le gare analizzate dalla pipeline automatica.</div>
+
+    <div class="filter-panel">
+      <div class="filter-row">
+        <div class="filter-group">
+          <div class="filter-label">Criterio Aggiudicazione</div>
+          <select class="filter-select" id="filtro-criterio" onchange="filtraArchivio()">
+            <option value="">Tutti</option>
+            ${criteriOpts}
+          </select>
+        </div>
+        <div class="filter-group">
+          <div class="filter-label">Elaborata dal</div>
+          <input type="date" class="filter-input" id="filtro-data-da" value="${filtroDa}" onchange="filtraArchivio()">
+        </div>
+        <div class="filter-group">
+          <div class="filter-label">Elaborata al</div>
+          <input type="date" class="filter-input" id="filtro-data-a" value="${filtroA}" onchange="filtraArchivio()">
+        </div>
+        <div class="filter-group" style="flex:0; min-width:auto;">
+          <div class="filter-label">&nbsp;</div>
+          <button class="btn-reset-filters" onclick="resetFiltri()">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-count">${archivioFiltrate.length} di ${archivioData.gare.length} gare</div>
+
+    ${archivioFiltrate.length > 0
+      ? `<div class="archive-grid">${cardsHtml}</div>`
+      : `<div class="archive-empty">Nessuna gara corrisponde ai filtri applicati.</div>`
+    }`;
+}
+
+// ── DETTAGLIO SINGOLA GARA ───────────────────────
 async function mostraDettaglioArchivio(idx) {
   archivioSelezionato = idx;
   mostraArchivioLista();
@@ -1282,55 +1551,57 @@ async function mostraDettaglioArchivio(idx) {
   const gara = archivioData.gare[idx];
   const main = document.getElementById("main-area");
 
-  main.innerHTML = `
-    <div class="processing-card">
-      <div class="spinner"></div>
-      <div class="processing-title">Caricamento dati...</div>
-    </div>`;
-
-  try {
-    const resp = await fetch("data/gare/" + gara.file);
-    if (!resp.ok) throw new Error("Impossibile caricare i dati della gara");
-    const dati = await resp.json();
-
-    const compilati = Object.values(dati).filter(v => v !== NOT_FOUND).length;
-
-    const sezioniHtml = SEZIONI_PIPELINE.map(sez => `
-      <div class="section-card">
-        <div class="section-header">${sez.titolo}</div>
-        <div class="section-fields">
-          ${sez.campi.map(([key, label]) => {
-            const val = dati[key] || NOT_FOUND;
-            const missing = val === NOT_FOUND;
-            return `<div class="field-row">
-              <div class="field-label">${label}</div>
-              <div class="field-value ${missing ? 'missing' : ''}">${missing ? '\u2014' : escHtml(val)}</div>
-            </div>`;
-          }).join("")}
-        </div>
-      </div>`).join("");
-
-    const nomeEnte = (dati.nome_scuola_meccanografico || gara.nome_ente).split("—")[0].trim();
-
+  // Usa cache se disponibile, altrimenti carica
+  let dati = archivioCache[gara.id];
+  if (!dati) {
     main.innerHTML = `
-      <div class="results-header">
-        <div>
-          <div class="page-heading">${escHtml(nomeEnte)}</div>
-          <div class="results-meta">
-            <span>${compilati}/23 campi compilati</span> &nbsp;·&nbsp;
-            Elaborata il ${gara.data_elaborazione} &nbsp;·&nbsp;
-            Fonte: pipeline automatica
-          </div>
+      <div class="processing-card">
+        <div class="spinner"></div>
+        <div class="processing-title">Caricamento dati...</div>
+      </div>`;
+    try {
+      const resp = await fetch("data/gare/" + gara.file);
+      if (!resp.ok) throw new Error("Impossibile caricare i dati della gara");
+      dati = await resp.json();
+      archivioCache[gara.id] = dati;
+    } catch (e) {
+      main.innerHTML = `<div class="upload-wrapper"><div class="alert-error">Errore: ${escHtml(e.message)}</div></div>`;
+      return;
+    }
+  }
+
+  const compilati = Object.values(dati).filter(v => v !== NOT_FOUND).length;
+
+  const sezioniHtml = SEZIONI_PIPELINE.map(sez => `
+    <div class="section-card">
+      <div class="section-header">${sez.titolo}</div>
+      <div class="section-fields">
+        ${sez.campi.map(([key, label]) => {
+          const val = dati[key] || NOT_FOUND;
+          const missing = val === NOT_FOUND;
+          return `<div class="field-row">
+            <div class="field-label">${label}</div>
+            <div class="field-value ${missing ? 'missing' : ''}">${missing ? '\u2014' : escHtml(val)}</div>
+          </div>`;
+        }).join("")}
+      </div>
+    </div>`).join("");
+
+  const nomeEnte = (dati.nome_scuola_meccanografico || gara.nome_ente).split("\u2014")[0].trim();
+
+  main.innerHTML = `
+    <div class="results-header">
+      <div>
+        <div class="page-heading">${escHtml(nomeEnte)}</div>
+        <div class="results-meta">
+          <span>${compilati}/23 campi compilati</span> &nbsp;\u00b7&nbsp;
+          Elaborata il ${gara.data_elaborazione} &nbsp;\u00b7&nbsp;
+          Fonte: pipeline automatica
         </div>
       </div>
-      ${sezioniHtml}`;
-
-  } catch (e) {
-    main.innerHTML = `
-      <div class="upload-wrapper">
-        <div class="alert-error">Errore: ${escHtml(e.message)}</div>
-      </div>`;
-  }
+      <button class="btn-download" onclick="mostraArchivioOverview()">Torna all'archivio</button>
+    </div>
+    ${sezioniHtml}`;
 }
 </script>
 </body>
