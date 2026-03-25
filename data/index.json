@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260318_Disciplinare-Gara_IIS-L-CEREBOTANI",
+      "nome_ente": "IIS L. CEREBOTANI - Codice meccanografico: BSIS03300R",
+      "data_elaborazione": "2026-03-25",
+      "valore_appalto": "€ 390.207,44 IVA esclusa - LOTTO 1 MetroPhisics Lab: € 66.677,45 CIG: BAE84EF410 - LOTTO 2 CyberData Lab: € 148.278,68 CIG: BAE84F04E3 - LOTTO 3 ProtoDesign Lab: € 96.562,79 CIG: BAE84F15B6 - LOTTO 4 DigiFactory Lab: € 78.688,52 CIG: BAE84F2689 - Costi della sicurezza da interferenze: € 0,00 per tutti i lotti",
+      "scadenza_procedura": "Disponibile sulla piattaforma di gara - durata procedimento prevista pari a 5 mesi dalla pubblicazione del bando",
+      "aree_tematiche": "Tecnologia",
+      "campi_compilati": 22,
+      "file": "20260318_Disciplinare-Gara_IIS-L-CEREBOTANI.json"
+    },
+    {
       "id": "20260325_Disciplinare-Gara_Non-specificato-nel-documento",
       "nome_ente": "Non specificato nel documento",
       "data_elaborazione": "2026-03-25",
@@ -74,5 +84,5 @@
       "file": "20260223_Disciplinare-Gara_ITIS-Ettore-Majorana-Cassino.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-03-25T11:25:08.359680"
+  "ultimo_aggiornamento": "2026-03-25T11:31:04.617861"
 }
