@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260325_Disciplinare-Gara_Non-specificato-nel-documento",
+      "nome_ente": "Non specificato nel documento",
+      "data_elaborazione": "2026-03-25",
+      "valore_appalto": "Importo massimo stimato € 198.000,00 IVA compresa. Importo finanziato progetto € 201.000,00. CIG non specificati nel documento.",
+      "scadenza_procedura": "Non specificato nel documento",
+      "aree_tematiche": "Tecnologia, Arredi",
+      "campi_compilati": 6,
+      "file": "20260325_Disciplinare-Gara_Non-specificato-nel-documento.json"
+    },
+    {
       "id": "20260312_Disciplinare-Gara_ISTITUTO-STATALE-DI-ISTRUZIONE-SUPERIORE-G-Salerno",
       "nome_ente": "ISTITUTO STATALE DI ISTRUZIONE SUPERIORE 'G. Salerno' - Codice meccanografico: pais01700b - 90024 GANGI (PA)",
       "data_elaborazione": "2026-03-12",
@@ -64,5 +74,5 @@
       "file": "20260223_Disciplinare-Gara_ITIS-Ettore-Majorana-Cassino.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-03-17T10:35:10.303269"
+  "ultimo_aggiornamento": "2026-03-25T11:25:08.359680"
 }
