@@ -970,7 +970,7 @@ const CHUNK_SIZE = 35000;
 const NOT_FOUND = "Non specificato nel documento";
 
 const SYSTEM_PROMPT = `Sei un esperto analista di appalti pubblici italiani.
-Analizza il Disciplinare di Gara fornito ed estrai esattamente i seguenti 23 campi in formato JSON.
+Analizza il Disciplinare di Gara fornito ed estrai esattamente i seguenti 30 campi in formato JSON.
 Per ogni campo non trovato nel documento, usa esattamente la stringa "Non specificato nel documento".
 Rispondi SOLO con il JSON, senza testo aggiuntivo, senza markdown, senza backtick.
 
@@ -990,9 +990,16 @@ Campi richiesti:
   "sopralluogo": "Sopralluogo obbligatorio: si/no, e data se disponibile",
   "garanzia_minima_obbligatoria": "Garanzia provvisoria minima obbligatoria richiesta (importo o percentuale)",
   "garanzia_criterio_premiale": "Garanzia come criterio premiale/punteggio aggiuntivo se previsto",
+  "garanzia_cauzione_provvisoria": "Rispondi SOLO 'Sì' o 'No' — è richiesta una garanzia o cauzione provvisoria?",
+  "contributo_anac": "Rispondi SOLO 'Sì' o 'No' — è richiesto il contributo gara ANAC? (obbligatorio per gare sopra 140.000 euro)",
+  "imposta_bollo_partecipazione": "Rispondi SOLO 'Sì' o 'No' — è richiesta l'imposta di bollo di 16 euro sulla domanda/istanza di partecipazione?",
   "fatturato_minimo": "Fatturato minimo richiesto (es. 200.000 € negli ultimi 3 anni)",
   "esperienze_pregresse": "Esperienze o forniture pregresse richieste come requisito",
   "certificazioni": "Certificazioni richieste (es. ISO 9001, CAM, altro)",
+  "checklist_dnsh_cam": "Rispondi SOLO 'Sì' o 'No' — è richiesta una checklist DNSH e/o certificati CAM da caricare con la documentazione di gara?",
+  "installazione_beni": "Descrivi i dettagli dell'installazione richiesta (a carico del fornitore, montaggio, collaudo, tempi, modalità). Se non richiesta, indica 'Non richiesta'",
+  "luogo_consegna": "Indica se la consegna è presso un plesso unico o più plessi. Se più plessi, elencali tutti con indirizzo se disponibile. Formato: 'Plesso unico: [indirizzo]' oppure 'Più plessi: [elenco]'",
+  "elenco_documenti": "Elenca tutti i documenti che il concorrente deve compilare e presentare con la domanda di partecipazione (es. DGUE, dichiarazioni antimafia, PassOE, cauzione, offerta tecnica, offerta economica). Elenco separato da punto e virgola",
   "categorie_prodotti": "Categorie merceologiche o CPV dei prodotti/servizi richiesti",
   "marche_specifiche": "Marche o modelli specifici citati (es. Google Workspace, Lenovo, Apple)",
   "subappalto": "Subappalto ammesso: si/no e condizioni",
@@ -1033,15 +1040,28 @@ const SEZIONI = [
     ["scadenza_offerta", "Scadenza Offerta"],
     ["sopralluogo",      "Sopralluogo"],
   ]},
+  { titolo: "Condizioni Amministrative", campi: [
+    ["garanzia_minima_obbligatoria",  "Garanzia Obbligatoria"],
+    ["garanzia_criterio_premiale",    "Garanzia Criterio Premiale"],
+    ["garanzia_cauzione_provvisoria", "Garanzia / Cauzione Provvisoria"],
+    ["contributo_anac",               "Contributo Gara ANAC"],
+    ["imposta_bollo_partecipazione",  "Imposta di Bollo Partecipazione"],
+  ]},
   { titolo: "Requisiti e Condizioni", campi: [
-    ["garanzia_minima_obbligatoria", "Garanzia Obbligatoria"],
-    ["garanzia_criterio_premiale",   "Garanzia Criterio Premiale"],
     ["fatturato_minimo",             "Fatturato Minimo"],
     ["esperienze_pregresse",         "Esperienze Pregresse"],
     ["certificazioni",               "Certificazioni Richieste"],
+    ["checklist_dnsh_cam",           "Checklist DNSH / Certificati CAM"],
     ["subappalto",                   "Subappalto"],
     ["varianti",                     "Varianti"],
     ["penali",                       "Penali"],
+  ]},
+  { titolo: "Fornitura e Logistica", campi: [
+    ["installazione_beni",  "Installazione dei Beni"],
+    ["luogo_consegna",      "Luogo di Consegna"],
+  ]},
+  { titolo: "Documentazione", campi: [
+    ["elenco_documenti",  "Elenco Documenti da Compilare"],
   ]},
   { titolo: "Prodotti e Note", campi: [
     ["categorie_prodotti", "Categorie / CPV"],
@@ -1536,11 +1556,20 @@ const SEZIONI_PIPELINE = [
     ["partecipazione_piu_lotti",             "Partecipazione a Piu Lotti"],
     ["consegne_parziali",                    "Consegne Parziali"],
     ["garanzia_provvisoria_definitiva_anac", "Garanzia Provv./Defin. ANAC"],
+    ["garanzia_cauzione_provvisoria",        "Garanzia / Cauzione Provvisoria"],
+    ["contributo_anac",                      "Contributo Gara ANAC"],
+    ["imposta_bollo_partecipazione",         "Imposta di Bollo Partecipazione"],
   ]},
   { titolo: "Requisiti Tecnici", campi: [
     ["prestazioni_richieste",                      "Prestazioni Richieste"],
+    ["installazione_beni",                         "Installazione dei Beni"],
+    ["luogo_consegna",                             "Luogo di Consegna"],
     ["requisiti_capacita_tecnica_professionale",   "Requisiti Capacita Tecnica"],
     ["certificazioni_beni",                        "Certificazioni Beni"],
+    ["checklist_dnsh_cam",                         "Checklist DNSH / Certificati CAM"],
+  ]},
+  { titolo: "Documentazione", campi: [
+    ["elenco_documenti",                           "Elenco Documenti da Compilare"],
   ]},
   { titolo: "Obblighi Post-Aggiudicazione", campi: [
     ["garanzia_minima_obbligatoria",  "Garanzia Minima Obbligatoria"],
