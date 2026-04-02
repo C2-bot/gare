@@ -2,12 +2,12 @@
   "gare": [
     {
       "id": "20260309_Disciplinare-Gara_Istituto-Tecnico-Economico-Turismo-e-Tecnologico-E",
-      "nome_ente": "Istituto Tecnico Economico Turismo e Tecnologico 'Emanuela Loi' - Nettuno - Codice meccanografico: RMTD48000N",
+      "nome_ente": "Istituto Tecnico Economico Turismo e Tecnologico \"Emanuela Loi\" - Nettuno - RMTD48000N",
       "data_elaborazione": "2026-04-02",
-      "valore_appalto": "Valore complessivo: € 438.600,00 IVA esclusa. Oneri sicurezza interferenze: € 0,00. CIG: Lotto 1 BAE8520C7D, Lotto 2 BAE8521D50, Lotto 3 BAE8522E23, Lotto 4 BAE8523EF6, Lotto 5 BAE8524FC9, Lotto 6 BAE85250A1, Lotto 7 BAE8526174",
-      "scadenza_procedura": "08/04/2026 ore 9:00",
+      "valore_appalto": "Importo complessivo € 438.600,00 IVA esclusa. Lotto 1 lab Job Safety: CIG BAE8520C7D; Lotto 2 lab Ingegneria finanziaria e Fintech: CIG BAE8521D50; Lotto 3 lab Data Science: CIG BAE8522E23; Lotto 4 lab Cybersecurity: CIG BAE8523EF6; Lotto 5 lab Open lab: CIG BAE8524FC9; Lotto 6 Forniture digitali rete cablaggio: CIG BAE85250A1; Lotto 7 Arredi laboratori: CIG BAE8526174. Oneri sicurezza interferenze: € 0,00",
+      "scadenza_procedura": "8 aprile 2026 ore 9:00",
       "aree_tematiche": "Tecnologia, Arredi",
-      "campi_compilati": 21,
+      "campi_compilati": 29,
       "file": "20260309_Disciplinare-Gara_Istituto-Tecnico-Economico-Turismo-e-Tecnologico-E.json"
     },
     {
@@ -94,5 +94,5 @@
       "file": "20260223_Disciplinare-Gara_ITIS-Ettore-Majorana-Cassino.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-04-02T18:08:43.477284"
+  "ultimo_aggiornamento": "2026-04-02T18:39:12.598750"
 }
