@@ -822,6 +822,58 @@
     margin-right: 8px;
     flex-shrink: 0;
   }
+  /* Legenda scoring */
+  .score-legenda-toggle {
+    display: block;
+    width: 100%;
+    padding: 10px 20px;
+    background: var(--off);
+    border: none;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--blue-mid);
+    cursor: pointer;
+    text-align: left;
+  }
+  .score-legenda-toggle:hover { background: var(--light-blue); }
+  .score-legenda-body {
+    padding: 16px 20px;
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.6;
+    border-top: 1px solid var(--border);
+  }
+  .score-legenda-body h4 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    color: var(--blue);
+    margin: 12px 0 4px;
+  }
+  .score-legenda-body h4:first-child { margin-top: 0; }
+  .score-legenda-body p { margin: 0 0 8px; }
+  .score-fasce {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+  .score-fascia-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--off);
+  }
+  .score-fascia-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+  }
+
   /* Config pesi modal */
   .pesi-modal-overlay {
     position: fixed;
@@ -2109,6 +2161,23 @@ function renderScoreSection(dati) {
           ${renderFattori(sc.copertura.fattori, copDesc)}
           ${noteHtml}
         </div>
+      </div>
+      <button class="score-legenda-toggle" onclick="this.nextElementSibling.classList.toggle('hidden'); this.textContent = this.nextElementSibling.classList.contains('hidden') ? 'Come viene calcolato lo score ▸' : 'Nascondi legenda ▾'">Come viene calcolato lo score ▸</button>
+      <div class="score-legenda-body hidden">
+        <p>Lo score di fattibilità valuta quanto una gara è adatta a C2 Group su una scala da <strong>A</strong> (molto adatta) a <strong>E</strong> (non adatta). Il punteggio finale (0-100) nasce dalla media pesata di due dimensioni.</p>
+        <h4>1. Criticità operative (${conf.peso_criticita}%)</h4>
+        <p>Valuta i rischi e gli oneri della partecipazione: <strong>Criterio di aggiudicazione</strong> (OEPV favorevole, minor prezzo sfavorevole), <strong>Penali</strong> (gravose o senza tetto penalizzano), <strong>Tempi di consegna</strong> (sotto 30gg penalizza), <strong>Requisiti tecnici</strong> (fatturato elevato o certificazioni rare penalizzano), <strong>Complessità consegna</strong> (più plessi = più rischio logistico), <strong>Costi di partecipazione</strong> (cauzione + ANAC + bollo), <strong>Garanzia obbligatoria</strong> (oltre 36 mesi penalizza), <strong>Subappalto</strong> (non ammesso = meno flessibilità).</p>
+        <h4>2. Copertura prodotti (${conf.peso_copertura}%)</h4>
+        <p>Valuta quanto il catalogo C2 Group copre ciò che la gara richiede: <strong>Copertura sotto-categorie</strong> (% delle sotto-categorie merceologiche presenti nel catalogo), <strong>Profondità catalogo</strong> (ampiezza gamma per sotto-categoria), <strong>Marchi in catalogo</strong> (marchi specifici richiesti), <strong>Compatibilità importo</strong> (gare molto grandi = maggiore esposizione).</p>
+        <h4>Fasce di valutazione</h4>
+        <div class="score-fasce">
+          <span class="score-fascia-tag"><span class="score-fascia-dot" style="background:#2E7D32"></span>A (80-100) Molto adatta</span>
+          <span class="score-fascia-tag"><span class="score-fascia-dot" style="background:#558B2F"></span>B (60-79) Buona opportunità</span>
+          <span class="score-fascia-tag"><span class="score-fascia-dot" style="background:#F57F17"></span>C (40-59) Valutare</span>
+          <span class="score-fascia-tag"><span class="score-fascia-dot" style="background:#E65100"></span>D (20-39) Sconsigliata</span>
+          <span class="score-fascia-tag"><span class="score-fascia-dot" style="background:#C62828"></span>E (0-19) Non adatta</span>
+        </div>
+        <p style="margin-top:12px; font-style:italic; color:var(--gray); font-size:11px;">I pesi dei singoli fattori sono configurabili dal bottone "Configura pesi". Lo score è indicativo e non sostituisce la valutazione commerciale.</p>
       </div>
     </div>`;
 }
