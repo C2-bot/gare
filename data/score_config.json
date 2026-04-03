@@ -1,0 +1,118 @@
+{
+  "versione": "1.0",
+  "peso_copertura": 50,
+  "peso_criticita": 50,
+  "fattori_criticita": {
+    "criterio_aggiudicazione": {
+      "peso": 15,
+      "descrizione": "OEPV favorevole, minor prezzo sfavorevole"
+    },
+    "penali": {
+      "peso": 15,
+      "descrizione": "Penali gravose o senza tetto massimo penalizzano"
+    },
+    "tempi_consegna": {
+      "peso": 15,
+      "descrizione": "Tempi stretti (<30gg) penalizzano"
+    },
+    "requisiti_tecnici": {
+      "peso": 15,
+      "descrizione": "Fatturato alto o certificazioni rare penalizzano"
+    },
+    "complessita_consegna": {
+      "peso": 10,
+      "descrizione": "Piu plessi = piu complessita logistica"
+    },
+    "costi_partecipazione": {
+      "peso": 10,
+      "descrizione": "Cauzione provvisoria + ANAC + bollo"
+    },
+    "garanzia_obbligatoria": {
+      "peso": 10,
+      "descrizione": "Garanzia >36 mesi penalizza"
+    },
+    "subappalto": {
+      "peso": 10,
+      "descrizione": "Subappalto non ammesso penalizza"
+    }
+  },
+  "fattori_copertura": {
+    "copertura_sotto_categorie": {
+      "peso": 40,
+      "descrizione": "Percentuale di sotto-categorie coperte dal catalogo C2"
+    },
+    "marchi_in_catalogo": {
+      "peso": 30,
+      "descrizione": "Marchi specifici richiesti presenti nel catalogo"
+    },
+    "profondita_catalogo": {
+      "peso": 20,
+      "descrizione": "Ampiezza gamma prodotti per sotto-categoria"
+    },
+    "compatibilita_importo": {
+      "peso": 10,
+      "descrizione": "Range prezzi del catalogo compatibile con importo gara"
+    }
+  },
+  "fasce_score": {
+    "A": {
+      "min": 80,
+      "max": 100,
+      "label": "Molto adatta - partecipazione raccomandata",
+      "colore": "#2E7D32"
+    },
+    "B": {
+      "min": 60,
+      "max": 79,
+      "label": "Buona opportunita - criticita gestibili",
+      "colore": "#558B2F"
+    },
+    "C": {
+      "min": 40,
+      "max": 59,
+      "label": "Fattibile con riserve - valutare",
+      "colore": "#F57F17"
+    },
+    "D": {
+      "min": 20,
+      "max": 39,
+      "label": "Criticita importanti - sconsigliata",
+      "colore": "#E65100"
+    },
+    "E": {
+      "min": 0,
+      "max": 19,
+      "label": "Non adatta al catalogo C2",
+      "colore": "#C62828"
+    }
+  },
+  "prodotti_per_sotto_categoria": {
+    "Notebook e portatili": 772,
+    "Desktop e workstation": 332,
+    "Tablet": 177,
+    "Monitor e display": 1097,
+    "Stampanti e scanner": 362,
+    "Proiettori e lavagne interattive": 141,
+    "Cuffie audio e videoconferenza": 443,
+    "Tastiere mouse e periferiche": 897,
+    "Networking e infrastruttura": 135,
+    "UPS e alimentatori": 262,
+    "Webcam e fotocamere": 70,
+    "Banchi e tavoli": 183,
+    "Sedie e sedute": 194,
+    "Armadi e scaffalature": 86,
+    "Arredi laboratorio e aule": 1253,
+    "Software didattico": 145,
+    "Software gestionale e ufficio": 120,
+    "Software modellazione 3D": 18,
+    "Robotica e coding": 45,
+    "Stampanti 3D": 13,
+    "Kit scientifici e laboratorio": 262,
+    "Strumenti musicali": 64,
+    "Giochi educativi e didattici": 193,
+    "Materiale psicomotorio e sport": 33,
+    "Cancelleria e carta": 2364,
+    "Toner e consumabili stampa": 1577,
+    "Batterie e alimentazione": 107
+  }
+}
