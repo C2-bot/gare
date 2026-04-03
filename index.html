@@ -1864,10 +1864,11 @@ function calcolaCriticita(dati) {
 
   // 2. Penali
   const pen = (dati.penali || NF).toLowerCase();
-  if (pen === NF.toLowerCase() || pen.includes("non previste") || pen.includes("non specificat")) fattori.penali = 80;
-  else if (pen.includes("tetto") || pen.includes("massimo") || pen.includes("max")) fattori.penali = 60;
-  else if (pen.includes("1%") || pen.includes("0,")) fattori.penali = 70;
-  else fattori.penali = 35;
+  if (pen === NF.toLowerCase() || pen.includes("non specificat")) fattori.penali = 50; // ignoto = neutro
+  else if (pen.includes("non previste") || pen.includes("nessuna")) fattori.penali = 90;
+  else if (pen.includes("tetto") || pen.includes("massimo") || pen.includes("max")) fattori.penali = 55;
+  else if (pen.includes("1%") || pen.includes("0,")) fattori.penali = 60;
+  else fattori.penali = 30;
 
   // 3. Tempi consegna
   const tempi = dati.data_limite_consegna_beni || NF;
@@ -1881,10 +1882,11 @@ function calcolaCriticita(dati) {
 
   // 4. Requisiti tecnici
   const req = (dati.requisiti_capacita_tecnica_professionale || NF).toLowerCase();
-  if (req === NF.toLowerCase()) fattori.requisiti_tecnici = 70;
-  else if (req.includes("fatturato") && (req.includes("milion") || req.match(/\d{3}\.?\d{3}/))) fattori.requisiti_tecnici = 25;
-  else if (req.includes("certificazion") || req.includes("iso")) fattori.requisiti_tecnici = 45;
-  else fattori.requisiti_tecnici = 70;
+  if (req === NF.toLowerCase()) fattori.requisiti_tecnici = 50; // ignoto = neutro
+  else if (req.includes("fatturato") && (req.includes("milion") || req.match(/\d{3}\.?\d{3}/))) fattori.requisiti_tecnici = 20;
+  else if (req.includes("certificazion") || req.includes("iso")) fattori.requisiti_tecnici = 40;
+  else if (req.includes("fatturato")) fattori.requisiti_tecnici = 45;
+  else fattori.requisiti_tecnici = 65;
 
   // 5. Complessità consegna
   const luogo = (dati.luogo_consegna || NF).toLowerCase();
@@ -1904,11 +1906,13 @@ function calcolaCriticita(dati) {
 
   // 7. Garanzia obbligatoria
   const gar = (dati.garanzia_minima_obbligatoria || NF).toLowerCase();
-  if (gar === NF.toLowerCase() || gar.includes("non")) fattori.garanzia_obbligatoria = 85;
-  else if (gar.includes("24") || gar.includes("12")) fattori.garanzia_obbligatoria = 70;
-  else if (gar.includes("36")) fattori.garanzia_obbligatoria = 50;
-  else if (gar.includes("48") || gar.includes("60")) fattori.garanzia_obbligatoria = 25;
-  else fattori.garanzia_obbligatoria = 55;
+  if (gar === NF.toLowerCase() || gar.includes("non specificat")) fattori.garanzia_obbligatoria = 50;
+  else if (gar.includes("non richiest") || gar.includes("non previst")) fattori.garanzia_obbligatoria = 85;
+  else if (gar.includes("12")) fattori.garanzia_obbligatoria = 70;
+  else if (gar.includes("24")) fattori.garanzia_obbligatoria = 55;
+  else if (gar.includes("36")) fattori.garanzia_obbligatoria = 40;
+  else if (gar.includes("48") || gar.includes("60")) fattori.garanzia_obbligatoria = 20;
+  else fattori.garanzia_obbligatoria = 50;
 
   // 8. Subappalto
   const sub = (dati.subappalto || dati.altri_servizi_richiesti || NF).toLowerCase();
@@ -1941,13 +1945,13 @@ function calcolaCopertura(dati) {
     : [];
 
   if (garaSottoCat.length === 0) {
-    // Fallback su aree tematiche
-    return { score: 50, fattori: {
-      copertura_sotto_categorie: 50,
-      marchi_in_catalogo: 50,
-      profondita_catalogo: 50,
-      compatibilita_importo: 50,
-    }, note: "Sotto-categorie non disponibili — score stimato" };
+    // Fallback: senza sotto-categorie non possiamo valutare bene
+    return { score: 40, fattori: {
+      copertura_sotto_categorie: 40,
+      marchi_in_catalogo: 40,
+      profondita_catalogo: 40,
+      compatibilita_importo: 40,
+    }, note: "Sotto-categorie non disponibili — score stimato al ribasso" };
   }
 
   // 1. Copertura sotto-categorie: quante delle richieste sono nel catalogo?
@@ -1959,31 +1963,43 @@ function calcolaCopertura(dati) {
   // 2. Marchi in catalogo (se il bando cita marchi e noi li abbiamo)
   const marche = dati.marche_specifiche || dati.categorie_prodotti || NOT_FOUND;
   if (marche === NOT_FOUND || !marche) {
-    fattori.marchi_in_catalogo = 70; // nessun vincolo = positivo
+    fattori.marchi_in_catalogo = 50; // nessun dato = neutro
   } else {
-    // Euristico: se ci sono marchi comuni nel nostro catalogo
     const marcheLower = marche.toLowerCase();
     const brandsNoti = ["hp","lenovo","apple","samsung","epson","canon","brother","acer","asus","dell",
                         "logitech","philips","viewsonic","jabra","lg","arredalab","c2 group"];
     const trovati = brandsNoti.filter(b => marcheLower.includes(b));
     const totMenzionati = marche.split(/[,;\/]/).filter(s => s.trim().length > 2).length || 1;
-    fattori.marchi_in_catalogo = Math.min(100, Math.round((trovati.length / totMenzionati) * 100));
+    fattori.marchi_in_catalogo = Math.min(100, Math.round((trovati.length / Math.max(totMenzionati, trovati.length + 1)) * 100));
   }
 
-  // 3. Profondità catalogo: media prodotti per sotto-categoria coperta
+  // 3. Profondità catalogo: penalizza sotto-categorie con pochi prodotti
   if (coperte.length > 0) {
-    const mediaProdotti = coperte.reduce((sum, sc) => {
+    const scores = coperte.map(sc => {
       const key = catalogoKeys.find(k => k.toLowerCase() === sc.toLowerCase());
-      return sum + (key ? catalogo[key] : 0);
-    }, 0) / coperte.length;
-    // >200 prodotti medi = ottimo, <20 = scarso
-    fattori.profondita_catalogo = Math.min(100, Math.round(mediaProdotti / 2));
+      const n = key ? catalogo[key] : 0;
+      // <20 prodotti = scarso, 20-100 = discreto, 100-500 = buono, >500 = ottimo
+      if (n >= 500) return 90;
+      if (n >= 100) return 70;
+      if (n >= 20) return 50;
+      return 20;
+    });
+    fattori.profondita_catalogo = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
   } else {
     fattori.profondita_catalogo = 10;
   }
 
-  // 4. Compatibilità importo (euristico su range prezzi)
-  fattori.compatibilita_importo = 70; // default neutro-positivo
+  // 4. Compatibilità importo — gare molto grandi sono più rischiose
+  const importoGara = estraiImporto(dati.valore_appalto);
+  if (!importoGara) {
+    fattori.compatibilita_importo = 50;
+  } else if (importoGara <= 200000) {
+    fattori.compatibilita_importo = 85;
+  } else if (importoGara <= 500000) {
+    fattori.compatibilita_importo = 65;
+  } else {
+    fattori.compatibilita_importo = 40;
+  }
 
   // Media pesata
   let somma = 0, pesoTot = 0;
@@ -2100,7 +2116,13 @@ function renderScoreSection(dati) {
 /* ── Badge score per le card overview ── */
 function renderScoreBadge(dati, small) {
   const sc = calcolaScore(dati);
-  const cls = small ? "score-badge score-badge-sm" : "score-badge";
+  if (small) {
+    return `<div style="display:flex; align-items:center; gap:6px; flex-shrink:0;" title="${sc.fascia.label}">
+      <div class="score-badge score-badge-sm" style="background:${sc.fascia.colore}">${sc.lettera}</div>
+      <span style="font-size:10px; font-weight:600; color:${sc.fascia.colore};">Fattibilità</span>
+    </div>`;
+  }
+  const cls = "score-badge";
   return `<div class="${cls}" style="background:${sc.fascia.colore}" title="Score: ${sc.finale}/100 — ${sc.fascia.label}">${sc.lettera}</div>`;
 }
 
@@ -2149,15 +2171,15 @@ function mostraPesiModal() {
       <p>Modifica i pesi di ciascun fattore. I punteggi di tutte le gare verranno ricalcolati automaticamente.</p>
       <div class="pesi-row">
         <label><strong>Peso Criticità Operative</strong></label>
-        <input type="range" min="0" max="100" value="${conf.peso_criticita}"
-               oninput="this.nextElementSibling.textContent=this.value" data-key="peso_criticita">
-        <div class="pesi-val">${conf.peso_criticita}</div>
+        <input type="range" min="0" max="100" value="${conf.peso_criticita}" id="slider-criticita"
+               oninput="this.nextElementSibling.textContent=this.value; document.getElementById('slider-copertura').value=100-this.value; document.getElementById('val-copertura').textContent=100-parseInt(this.value);" data-key="peso_criticita">
+        <div class="pesi-val" id="val-criticita">${conf.peso_criticita}</div>
       </div>
       <div class="pesi-row">
         <label><strong>Peso Copertura Prodotti</strong></label>
-        <input type="range" min="0" max="100" value="${conf.peso_copertura}"
-               oninput="this.nextElementSibling.textContent=this.value" data-key="peso_copertura">
-        <div class="pesi-val">${conf.peso_copertura}</div>
+        <input type="range" min="0" max="100" value="${conf.peso_copertura}" id="slider-copertura"
+               oninput="this.nextElementSibling.textContent=this.value; document.getElementById('slider-criticita').value=100-this.value; document.getElementById('val-criticita').textContent=100-parseInt(this.value);" data-key="peso_copertura">
+        <div class="pesi-val" id="val-copertura">${conf.peso_copertura}</div>
       </div>
       <div class="pesi-group-title">Fattori Criticità</div>
       ${renderSliders(critKeys, "fattori_criticita", critDesc)}
