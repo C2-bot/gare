@@ -702,6 +702,205 @@
     margin-top: 10px;
   }
 
+  /* ── SCORE FATTIBILITA ──────────────────────────── */
+  .score-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .score-badge-sm {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    font-size: 13px;
+  }
+  .score-label {
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: 8px;
+  }
+  .score-section {
+    background: var(--white);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .score-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, #1A3C6E, #2E75B6);
+    color: white;
+  }
+  .score-header-info { flex: 1; }
+  .score-header-letter {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid rgba(255,255,255,.3);
+  }
+  .score-header-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  .score-header-desc {
+    font-size: 12px;
+    opacity: .8;
+    margin-top: 2px;
+  }
+  .score-body { padding: 20px; }
+  .score-dimension {
+    margin-bottom: 20px;
+  }
+  .score-dimension:last-child { margin-bottom: 0; }
+  .score-dim-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .score-dim-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--blue);
+    text-transform: uppercase;
+  }
+  .score-dim-value {
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .score-bar-bg {
+    height: 8px;
+    background: var(--off);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width .5s ease;
+  }
+  .score-factor {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .score-factor:last-child { border-bottom: none; }
+  .score-factor-name { color: var(--gray); flex: 1; }
+  .score-factor-val {
+    font-weight: 600;
+    min-width: 60px;
+    text-align: right;
+  }
+  .score-factor-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  /* Config pesi modal */
+  .pesi-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .pesi-modal {
+    background: white;
+    border-radius: 16px;
+    width: 560px;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 28px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+  }
+  .pesi-modal h3 {
+    font-family: 'Montserrat', sans-serif;
+    color: var(--blue);
+    margin: 0 0 6px;
+    font-size: 16px;
+  }
+  .pesi-modal p {
+    color: var(--gray);
+    font-size: 12px;
+    margin: 0 0 20px;
+  }
+  .pesi-group-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--blue-mid);
+    text-transform: uppercase;
+    margin: 16px 0 8px;
+  }
+  .pesi-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+  }
+  .pesi-row label {
+    flex: 1;
+    font-size: 12px;
+    color: var(--text);
+  }
+  .pesi-row input[type=range] {
+    width: 120px;
+  }
+  .pesi-row .pesi-val {
+    width: 35px;
+    text-align: right;
+    font-weight: 700;
+    font-size: 12px;
+    color: var(--blue);
+  }
+  .pesi-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .pesi-btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .pesi-btn-primary { background: var(--blue-mid); color: white; }
+  .pesi-btn-secondary { background: var(--off); color: var(--text); }
+  .pesi-btn:hover { opacity: .85; }
+
   /* ── CONFRONTO GARE ──────────────────────────── */
   .gara-card-check {
     position: absolute;
@@ -1006,7 +1205,8 @@ Campi richiesti:
   "varianti": "Varianti ammesse: si/no",
   "penali": "Penali previste per inadempimento o ritardo — indica percentuale o importo, condizioni di applicazione (es. ritardo consegna, difformità), base di calcolo e tetto massimo se specificati",
   "note_aggiuntive": "Altre informazioni rilevanti non coperte dai campi precedenti",
-  "aree_tematiche": "Classifica la gara in una o più delle seguenti categorie, SOLO se esplicitamente pertinenti al contenuto del documento: Tecnologia, Arredi, Software, Formazione, Materiale Didattico, Consumabili, STEAM, Altro. Separa con virgola se più di una. Se non è chiaro, indica Altro."
+  "aree_tematiche": "Classifica la gara in una o più delle seguenti categorie, SOLO se esplicitamente pertinenti al contenuto del documento: Tecnologia, Arredi, Software, Formazione, Materiale Didattico, Consumabili, STEAM, Altro. Separa con virgola se più di una. Se non è chiaro, indica Altro.",
+  "sotto_categorie_merceologiche": "Classifica i prodotti/beni richiesti dalla gara in una o più delle seguenti sotto-categorie, SOLO quelle esplicitamente pertinenti. Separa con virgola: Notebook e portatili, Desktop e workstation, Tablet, Monitor e display, Stampanti e scanner, Proiettori e lavagne interattive, Cuffie audio e videoconferenza, Tastiere mouse e periferiche, Networking e infrastruttura, UPS e alimentatori, Webcam e fotocamere, Banchi e tavoli, Sedie e sedute, Armadi e scaffalature, Arredi laboratorio e aule, Software didattico, Software gestionale e ufficio, Software modellazione 3D, Robotica e coding, Stampanti 3D, Kit scientifici e laboratorio, Strumenti musicali, Giochi educativi e didattici, Materiale psicomotorio e sport, Cancelleria e carta, Toner e consumabili stampa, Batterie e alimentazione."
 }`;
 
 // ═══════════════════════════════════════════════════
@@ -1068,6 +1268,7 @@ const SEZIONI = [
     ["marche_specifiche",  "Marche / Modelli Specifici"],
     ["note_aggiuntive",    "Note Aggiuntive"],
     ["aree_tematiche",     "Aree Tematiche"],
+    ["sotto_categorie_merceologiche", "Sotto-categorie Merceologiche"],
   ]},
 ];
 
@@ -1543,6 +1744,7 @@ const SEZIONI_PIPELINE = [
     ["piattaforma_pubblicazione", "Piattaforma di Pubblicazione"],
     ["cup_codice_progetto",       "CUP / Codice Progetto"],
     ["aree_tematiche",            "Aree Tematiche"],
+    ["sotto_categorie_merceologiche", "Sotto-categorie Merceologiche"],
   ]},
   { titolo: "Date e Scadenze", campi: [
     ["inizio_procedura",                "Inizio Procedura"],
@@ -1589,6 +1791,415 @@ let archivioSelezionato = null;
 let confrontoSelezione = [];  // indici gare selezionate per confronto
 let tabCorrente = "sessione";
 let vistaArchivio = "overview"; // "overview" | "statistiche"
+let scoreConfig = null;  // caricato da GitHub
+
+// ═══════════════════════════════════════════════════
+//  SCORING FATTIBILITA
+// ═══════════════════════════════════════════════════
+
+const SCORE_CONFIG_DEFAULT = {
+  peso_copertura: 50,
+  peso_criticita: 50,
+  fattori_criticita: {
+    criterio_aggiudicazione: { peso: 15 },
+    penali: { peso: 15 },
+    tempi_consegna: { peso: 15 },
+    requisiti_tecnici: { peso: 15 },
+    complessita_consegna: { peso: 10 },
+    costi_partecipazione: { peso: 10 },
+    garanzia_obbligatoria: { peso: 10 },
+    subappalto: { peso: 10 },
+  },
+  fattori_copertura: {
+    copertura_sotto_categorie: { peso: 40 },
+    marchi_in_catalogo: { peso: 30 },
+    profondita_catalogo: { peso: 20 },
+    compatibilita_importo: { peso: 10 },
+  },
+  fasce_score: {
+    A: { min: 80, max: 100, label: "Molto adatta — partecipazione raccomandata", colore: "#2E7D32" },
+    B: { min: 60, max: 79, label: "Buona opportunità — criticità gestibili", colore: "#558B2F" },
+    C: { min: 40, max: 59, label: "Fattibile con riserve — valutare", colore: "#F57F17" },
+    D: { min: 20, max: 39, label: "Criticità importanti — sconsigliata", colore: "#E65100" },
+    E: { min: 0, max: 19, label: "Non adatta al catalogo C2", colore: "#C62828" },
+  },
+  prodotti_per_sotto_categoria: {
+    "Notebook e portatili": 772, "Desktop e workstation": 332, "Tablet": 177,
+    "Monitor e display": 1097, "Stampanti e scanner": 362, "Proiettori e lavagne interattive": 141,
+    "Cuffie audio e videoconferenza": 443, "Tastiere mouse e periferiche": 897,
+    "Networking e infrastruttura": 135, "UPS e alimentatori": 262, "Webcam e fotocamere": 70,
+    "Banchi e tavoli": 183, "Sedie e sedute": 194, "Armadi e scaffalature": 86,
+    "Arredi laboratorio e aule": 1253, "Software didattico": 145, "Software gestionale e ufficio": 120,
+    "Software modellazione 3D": 18, "Robotica e coding": 45, "Stampanti 3D": 13,
+    "Kit scientifici e laboratorio": 262, "Strumenti musicali": 64, "Giochi educativi e didattici": 193,
+    "Materiale psicomotorio e sport": 33, "Cancelleria e carta": 2364,
+    "Toner e consumabili stampa": 1577, "Batterie e alimentazione": 107,
+  },
+};
+
+async function caricaScoreConfig() {
+  if (scoreConfig) return scoreConfig;
+  try {
+    const resp = await fetch("data/score_config.json");
+    if (resp.ok) scoreConfig = await resp.json();
+  } catch (e) { /* fallback */ }
+  if (!scoreConfig) scoreConfig = SCORE_CONFIG_DEFAULT;
+  return scoreConfig;
+}
+
+function getConf() { return scoreConfig || SCORE_CONFIG_DEFAULT; }
+
+/* ── Calcolo criticità operative (0-100, alto = poche criticità) ── */
+function calcolaCriticita(dati) {
+  const NF = NOT_FOUND;
+  const conf = getConf().fattori_criticita;
+  const fattori = {};
+
+  // 1. Criterio aggiudicazione (OEPV = buono, minor prezzo = male)
+  const crit = (dati.criterio_aggiudicazione || NF).toLowerCase();
+  if (crit === NF.toLowerCase()) fattori.criterio_aggiudicazione = 50;
+  else if (crit.includes("oepv") || crit.includes("offerta economicamente")) fattori.criterio_aggiudicazione = 90;
+  else if (crit.includes("minor prezzo") || crit.includes("prezzo più basso")) fattori.criterio_aggiudicazione = 25;
+  else fattori.criterio_aggiudicazione = 60;
+
+  // 2. Penali
+  const pen = (dati.penali || NF).toLowerCase();
+  if (pen === NF.toLowerCase() || pen.includes("non previste") || pen.includes("non specificat")) fattori.penali = 80;
+  else if (pen.includes("tetto") || pen.includes("massimo") || pen.includes("max")) fattori.penali = 60;
+  else if (pen.includes("1%") || pen.includes("0,")) fattori.penali = 70;
+  else fattori.penali = 35;
+
+  // 3. Tempi consegna
+  const tempi = dati.data_limite_consegna_beni || NF;
+  const ggMatch = tempi.match(/(\d+)\s*giorn/i);
+  if (ggMatch) {
+    const gg = parseInt(ggMatch[1]);
+    if (gg >= 60) fattori.tempi_consegna = 90;
+    else if (gg >= 30) fattori.tempi_consegna = 60;
+    else fattori.tempi_consegna = 25;
+  } else fattori.tempi_consegna = 60; // non specificato = neutro
+
+  // 4. Requisiti tecnici
+  const req = (dati.requisiti_capacita_tecnica_professionale || NF).toLowerCase();
+  if (req === NF.toLowerCase()) fattori.requisiti_tecnici = 70;
+  else if (req.includes("fatturato") && (req.includes("milion") || req.match(/\d{3}\.?\d{3}/))) fattori.requisiti_tecnici = 25;
+  else if (req.includes("certificazion") || req.includes("iso")) fattori.requisiti_tecnici = 45;
+  else fattori.requisiti_tecnici = 70;
+
+  // 5. Complessità consegna
+  const luogo = (dati.luogo_consegna || NF).toLowerCase();
+  if (luogo.includes("plesso unico") || luogo.includes("unico")) fattori.complessita_consegna = 90;
+  else if (luogo.includes("più plessi") || luogo.includes("piu plessi")) fattori.complessita_consegna = 35;
+  else fattori.complessita_consegna = 65;
+
+  // 6. Costi partecipazione (cauzione + ANAC + bollo)
+  const cauzione = (dati.garanzia_cauzione_provvisoria || "").toLowerCase();
+  const anac = (dati.contributo_anac || "").toLowerCase();
+  const bollo = (dati.imposta_bollo_partecipazione || "").toLowerCase();
+  let costiCount = 0;
+  if (cauzione.startsWith("s")) costiCount++;
+  if (anac.startsWith("s")) costiCount++;
+  if (bollo.startsWith("s")) costiCount++;
+  fattori.costi_partecipazione = costiCount === 0 ? 90 : costiCount === 1 ? 70 : costiCount === 2 ? 50 : 30;
+
+  // 7. Garanzia obbligatoria
+  const gar = (dati.garanzia_minima_obbligatoria || NF).toLowerCase();
+  if (gar === NF.toLowerCase() || gar.includes("non")) fattori.garanzia_obbligatoria = 85;
+  else if (gar.includes("24") || gar.includes("12")) fattori.garanzia_obbligatoria = 70;
+  else if (gar.includes("36")) fattori.garanzia_obbligatoria = 50;
+  else if (gar.includes("48") || gar.includes("60")) fattori.garanzia_obbligatoria = 25;
+  else fattori.garanzia_obbligatoria = 55;
+
+  // 8. Subappalto
+  const sub = (dati.subappalto || dati.altri_servizi_richiesti || NF).toLowerCase();
+  if (sub.includes("non ammesso") || sub.includes("non consentito") || sub.includes("vietato")) fattori.subappalto = 30;
+  else fattori.subappalto = 80;
+
+  // Media pesata
+  let somma = 0, pesoTot = 0;
+  for (const [k, v] of Object.entries(fattori)) {
+    const p = conf[k]?.peso || 10;
+    somma += v * p;
+    pesoTot += p;
+  }
+  const score = pesoTot > 0 ? Math.round(somma / pesoTot) : 50;
+  return { score, fattori };
+}
+
+/* ── Calcolo copertura prodotti (0-100) ── */
+function calcolaCopertura(dati) {
+  const conf = getConf();
+  const confCop = conf.fattori_copertura;
+  const catalogo = conf.prodotti_per_sotto_categoria || {};
+  const catalogoKeys = Object.keys(catalogo);
+  const fattori = {};
+
+  // Sotto-categorie della gara
+  const scRaw = dati.sotto_categorie_merceologiche || "";
+  const garaSottoCat = scRaw && scRaw !== NOT_FOUND
+    ? scRaw.split(",").map(s => s.trim()).filter(Boolean)
+    : [];
+
+  if (garaSottoCat.length === 0) {
+    // Fallback su aree tematiche
+    return { score: 50, fattori: {
+      copertura_sotto_categorie: 50,
+      marchi_in_catalogo: 50,
+      profondita_catalogo: 50,
+      compatibilita_importo: 50,
+    }, note: "Sotto-categorie non disponibili — score stimato" };
+  }
+
+  // 1. Copertura sotto-categorie: quante delle richieste sono nel catalogo?
+  const coperte = garaSottoCat.filter(sc => catalogoKeys.some(k => k.toLowerCase() === sc.toLowerCase()));
+  fattori.copertura_sotto_categorie = garaSottoCat.length > 0
+    ? Math.round((coperte.length / garaSottoCat.length) * 100)
+    : 50;
+
+  // 2. Marchi in catalogo (se il bando cita marchi e noi li abbiamo)
+  const marche = dati.marche_specifiche || dati.categorie_prodotti || NOT_FOUND;
+  if (marche === NOT_FOUND || !marche) {
+    fattori.marchi_in_catalogo = 70; // nessun vincolo = positivo
+  } else {
+    // Euristico: se ci sono marchi comuni nel nostro catalogo
+    const marcheLower = marche.toLowerCase();
+    const brandsNoti = ["hp","lenovo","apple","samsung","epson","canon","brother","acer","asus","dell",
+                        "logitech","philips","viewsonic","jabra","lg","arredalab","c2 group"];
+    const trovati = brandsNoti.filter(b => marcheLower.includes(b));
+    const totMenzionati = marche.split(/[,;\/]/).filter(s => s.trim().length > 2).length || 1;
+    fattori.marchi_in_catalogo = Math.min(100, Math.round((trovati.length / totMenzionati) * 100));
+  }
+
+  // 3. Profondità catalogo: media prodotti per sotto-categoria coperta
+  if (coperte.length > 0) {
+    const mediaProdotti = coperte.reduce((sum, sc) => {
+      const key = catalogoKeys.find(k => k.toLowerCase() === sc.toLowerCase());
+      return sum + (key ? catalogo[key] : 0);
+    }, 0) / coperte.length;
+    // >200 prodotti medi = ottimo, <20 = scarso
+    fattori.profondita_catalogo = Math.min(100, Math.round(mediaProdotti / 2));
+  } else {
+    fattori.profondita_catalogo = 10;
+  }
+
+  // 4. Compatibilità importo (euristico su range prezzi)
+  fattori.compatibilita_importo = 70; // default neutro-positivo
+
+  // Media pesata
+  let somma = 0, pesoTot = 0;
+  for (const [k, v] of Object.entries(fattori)) {
+    const p = confCop[k]?.peso || 10;
+    somma += v * p;
+    pesoTot += p;
+  }
+  const score = pesoTot > 0 ? Math.round(somma / pesoTot) : 50;
+  return { score, fattori };
+}
+
+/* ── Score finale A-E ── */
+function calcolaScore(dati) {
+  const conf = getConf();
+  const crit = calcolaCriticita(dati);
+  const cop = calcolaCopertura(dati);
+  const finale = Math.round(
+    (crit.score * conf.peso_criticita + cop.score * conf.peso_copertura) /
+    (conf.peso_criticita + conf.peso_copertura)
+  );
+
+  const fasce = conf.fasce_score;
+  let lettera = "C";
+  let fascia = fasce.C;
+  for (const [l, f] of Object.entries(fasce)) {
+    if (finale >= f.min && finale <= f.max) {
+      lettera = l;
+      fascia = f;
+      break;
+    }
+  }
+
+  return { lettera, finale, fascia, criticita: crit, copertura: cop };
+}
+
+/* ── HTML sezione fattibilità nel dettaglio gara ── */
+function renderScoreSection(dati) {
+  const sc = calcolaScore(dati);
+  const conf = getConf();
+  const fasciaDesc = {
+    criterio_aggiudicazione: "Criterio di aggiudicazione",
+    penali: "Penali contrattuali",
+    tempi_consegna: "Tempi di consegna",
+    requisiti_tecnici: "Requisiti tecnici/professionali",
+    complessita_consegna: "Complessità consegna (plessi)",
+    costi_partecipazione: "Costi di partecipazione",
+    garanzia_obbligatoria: "Garanzia obbligatoria",
+    subappalto: "Subappalto ammesso",
+  };
+  const copDesc = {
+    copertura_sotto_categorie: "Copertura sotto-categorie",
+    marchi_in_catalogo: "Marchi richiesti in catalogo",
+    profondita_catalogo: "Profondità gamma prodotti",
+    compatibilita_importo: "Compatibilità importo",
+  };
+
+  function dotColor(val) {
+    if (val >= 70) return "#2E7D32";
+    if (val >= 45) return "#F57F17";
+    return "#C62828";
+  }
+
+  function renderFattori(fattori, labels) {
+    return Object.entries(fattori).map(([k, v]) => `
+      <div class="score-factor">
+        <div class="score-factor-dot" style="background:${dotColor(v)}"></div>
+        <div class="score-factor-name">${labels[k] || k}</div>
+        <div class="score-factor-val" style="color:${dotColor(v)}">${v}/100</div>
+      </div>`).join("");
+  }
+
+  const noteHtml = sc.copertura.note
+    ? `<div style="font-size:11px; color:var(--gray); font-style:italic; margin-top:8px;">${sc.copertura.note}</div>`
+    : "";
+
+  return `
+    <div class="score-section">
+      <div class="score-header">
+        <div class="score-header-letter" style="background:${sc.fascia.colore}">${sc.lettera}</div>
+        <div class="score-header-info">
+          <div class="score-header-title">Score Fattibilità: ${sc.finale}/100</div>
+          <div class="score-header-desc">${sc.fascia.label}</div>
+        </div>
+        <button class="pesi-btn pesi-btn-secondary" style="font-size:11px; padding:6px 12px;"
+                onclick="mostraPesiModal()">Configura pesi</button>
+      </div>
+      <div class="score-body">
+        <div class="score-dimension">
+          <div class="score-dim-header">
+            <div class="score-dim-title">Criticità operative (${conf.peso_criticita}%)</div>
+            <div class="score-dim-value" style="color:${dotColor(sc.criticita.score)}">${sc.criticita.score}/100</div>
+          </div>
+          <div class="score-bar-bg">
+            <div class="score-bar-fill" style="width:${sc.criticita.score}%; background:${dotColor(sc.criticita.score)}"></div>
+          </div>
+          ${renderFattori(sc.criticita.fattori, fasciaDesc)}
+        </div>
+        <div class="score-dimension">
+          <div class="score-dim-header">
+            <div class="score-dim-title">Copertura prodotti (${conf.peso_copertura}%)</div>
+            <div class="score-dim-value" style="color:${dotColor(sc.copertura.score)}">${sc.copertura.score}/100</div>
+          </div>
+          <div class="score-bar-bg">
+            <div class="score-bar-fill" style="width:${sc.copertura.score}%; background:${dotColor(sc.copertura.score)}"></div>
+          </div>
+          ${renderFattori(sc.copertura.fattori, copDesc)}
+          ${noteHtml}
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ── Badge score per le card overview ── */
+function renderScoreBadge(dati, small) {
+  const sc = calcolaScore(dati);
+  const cls = small ? "score-badge score-badge-sm" : "score-badge";
+  return `<div class="${cls}" style="background:${sc.fascia.colore}" title="Score: ${sc.finale}/100 — ${sc.fascia.label}">${sc.lettera}</div>`;
+}
+
+/* ── Modal configurazione pesi ── */
+function mostraPesiModal() {
+  const conf = getConf();
+  const critKeys = Object.keys(conf.fattori_criticita);
+  const copKeys = Object.keys(conf.fattori_copertura);
+
+  const critDesc = {
+    criterio_aggiudicazione: "Criterio di aggiudicazione",
+    penali: "Penali contrattuali",
+    tempi_consegna: "Tempi di consegna",
+    requisiti_tecnici: "Requisiti tecnici",
+    complessita_consegna: "Complessità consegna",
+    costi_partecipazione: "Costi partecipazione",
+    garanzia_obbligatoria: "Garanzia obbligatoria",
+    subappalto: "Subappalto",
+  };
+  const copDesc = {
+    copertura_sotto_categorie: "Copertura sotto-categorie",
+    marchi_in_catalogo: "Marchi in catalogo",
+    profondita_catalogo: "Profondità catalogo",
+    compatibilita_importo: "Compatibilità importo",
+  };
+
+  function renderSliders(keys, section, labels) {
+    return keys.map(k => {
+      const peso = conf[section][k].peso;
+      return `<div class="pesi-row">
+        <label>${labels[k] || k}</label>
+        <input type="range" min="0" max="30" value="${peso}"
+               oninput="this.nextElementSibling.textContent=this.value"
+               data-section="${section}" data-key="${k}">
+        <div class="pesi-val">${peso}</div>
+      </div>`;
+    }).join("");
+  }
+
+  const overlay = document.createElement("div");
+  overlay.className = "pesi-modal-overlay";
+  overlay.id = "pesi-modal";
+  overlay.innerHTML = `
+    <div class="pesi-modal">
+      <h3>Configurazione Pesi Score</h3>
+      <p>Modifica i pesi di ciascun fattore. I punteggi di tutte le gare verranno ricalcolati automaticamente.</p>
+      <div class="pesi-row">
+        <label><strong>Peso Criticità Operative</strong></label>
+        <input type="range" min="0" max="100" value="${conf.peso_criticita}"
+               oninput="this.nextElementSibling.textContent=this.value" data-key="peso_criticita">
+        <div class="pesi-val">${conf.peso_criticita}</div>
+      </div>
+      <div class="pesi-row">
+        <label><strong>Peso Copertura Prodotti</strong></label>
+        <input type="range" min="0" max="100" value="${conf.peso_copertura}"
+               oninput="this.nextElementSibling.textContent=this.value" data-key="peso_copertura">
+        <div class="pesi-val">${conf.peso_copertura}</div>
+      </div>
+      <div class="pesi-group-title">Fattori Criticità</div>
+      ${renderSliders(critKeys, "fattori_criticita", critDesc)}
+      <div class="pesi-group-title">Fattori Copertura</div>
+      ${renderSliders(copKeys, "fattori_copertura", copDesc)}
+      <div class="pesi-actions">
+        <button class="pesi-btn pesi-btn-secondary" onclick="chiudiPesiModal()">Annulla</button>
+        <button class="pesi-btn pesi-btn-primary" onclick="salvaPesi()">Applica e ricalcola</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function chiudiPesiModal() {
+  const m = document.getElementById("pesi-modal");
+  if (m) m.remove();
+}
+
+function salvaPesi() {
+  const conf = getConf();
+  const modal = document.getElementById("pesi-modal");
+  modal.querySelectorAll("input[type=range]").forEach(inp => {
+    const section = inp.dataset.section;
+    const key = inp.dataset.key;
+    const val = parseInt(inp.value);
+    if (section && key) {
+      conf[section][key].peso = val;
+    } else if (key === "peso_criticita") {
+      conf.peso_criticita = val;
+    } else if (key === "peso_copertura") {
+      conf.peso_copertura = val;
+    }
+  });
+  scoreConfig = conf;
+  chiudiPesiModal();
+  // Ricalcola vista corrente
+  if (archivioSelezionato !== null) {
+    mostraDettaglioArchivio(archivioSelezionato);
+  } else {
+    mostraArchivioOverview();
+  }
+}
 
 function switchTab(tab) {
   tabCorrente = tab;
@@ -1611,7 +2222,11 @@ async function caricaArchivio() {
   list.innerHTML = '<div class="sidebar-loading">Caricamento archivio...</div>';
 
   try {
-    const resp = await fetch("data/index.json");
+    // Carica config score in parallelo con l'indice
+    const [resp] = await Promise.all([
+      fetch("data/index.json"),
+      caricaScoreConfig(),
+    ]);
     if (!resp.ok) throw new Error("Archivio non ancora disponibile");
     archivioData = await resp.json();
 
@@ -1983,10 +2598,15 @@ function mostraArchivioOverview() {
     const valoreTag = importoFmt ? `<span class="gara-card-valore">${importoFmt}</span>` : "";
     const isChecked = confrontoSelezione.includes(origIdx);
 
+    const scoreBadge = Object.keys(dati).length > 5 ? renderScoreBadge(dati, true) : "";
+
     return `
     <div class="gara-card" onclick="mostraDettaglioArchivio(${origIdx})">
       <div class="gara-card-check ${isChecked ? 'checked' : ''}" onclick="event.stopPropagation(); toggleConfronto(${origIdx})" title="Seleziona per confronto">${isChecked ? '\u2713' : ''}</div>
-      <div class="gara-card-name">${escHtml(nome)}</div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        ${scoreBadge}
+        <div class="gara-card-name" style="flex:1">${escHtml(nome)}</div>
+      </div>
       ${criterio && criterio !== NOT_FOUND ? `<div class="gara-card-field"><strong>Criterio:</strong> ${escHtml(criterio.slice(0, 60))}</div>` : ""}
       ${scadenza && scadenza !== NOT_FOUND ? `<div class="gara-card-field"><strong>Scadenza:</strong> ${escHtml(scadenza.slice(0, 40))}</div>` : ""}
       ${lotti && lotti !== NOT_FOUND ? `<div class="gara-card-field"><strong>Lotti:</strong> ${escHtml(lotti.slice(0, 30))}</div>` : ""}
@@ -2159,19 +2779,22 @@ async function mostraDettaglioArchivio(idx) {
   const areeTags = aree.map(a => `<span class="gara-card-area">${a}</span>`).join(" ");
   const locTag = loc ? `<span class="gara-card-localita">${loc.provincia} \u2014 ${loc.regione}</span>` : "";
 
+  const scoreHtml = renderScoreSection(dati);
+
   main.innerHTML = `
     <div class="results-header">
       <div>
         <div class="page-heading">${escHtml(nomeEnte)}</div>
         <div class="results-meta">
           ${importoFmt ? `<span class="gara-card-valore" style="font-size:13px; padding:3px 10px;">${importoFmt}</span> &nbsp;` : ""}
-          <span>${compilati}/23 campi compilati</span> &nbsp;\u00b7&nbsp;
+          <span>${compilati}/32 campi compilati</span> &nbsp;\u00b7&nbsp;
           ${gara.data_elaborazione} &nbsp;\u00b7&nbsp;
           ${areeTags} ${locTag}
         </div>
       </div>
       <button class="btn-download" onclick="mostraArchivioOverview()">Torna all'archivio</button>
     </div>
+    ${scoreHtml}
     ${sezioniHtml}`;
 }
 
