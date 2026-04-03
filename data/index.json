@@ -1,23 +1,103 @@
 {
   "gare": [
     {
+      "id": "20260403_Disciplinare-Gara_Non-specificato-nel-documento",
+      "nome_ente": "Non specificato nel documento",
+      "data_elaborazione": "2026-04-03",
+      "valore_appalto": "Importo massimo stimato € 198.000,00 IVA compresa; Importo finanziato € 201.000,00",
+      "scadenza_procedura": "Non specificato nel documento",
+      "aree_tematiche": "Tecnologia, Arredi",
+      "campi_compilati": 9,
+      "file": "20260403_Disciplinare-Gara_Non-specificato-nel-documento.json"
+    },
+    {
+      "id": "20260403_Disciplinare-Gara_ITIS-Galileo-Galilei",
+      "nome_ente": "I.T.I.S. Galileo Galilei - Via Conte Verde 51 - 00185 Roma - Codice Meccanografico: RMTF090003",
+      "data_elaborazione": "2026-04-03",
+      "valore_appalto": "Valore complessivo dell'appalto per la totalità dei 9 lotti: € 149.237,26 (IVA esclusa). Lotto 1 - CIG BAA1689174; Lotto 2 - CIG BAA168A247; Lotto 3 - CIG BAA168B31A; Lotto 4 - CIG BAA168C3ED; Lotto 5 - CIG BAA168D4C0; Lotto 6 - CIG BAA168E593; Lotto 7 - CIG BAA168F666; Lotto 8 - CIG BAA1690739; Lotto 9 - CIG BAA169180C. Importi specifici per lotto non indicati in questo blocco. Oneri sicurezza interferenze: € 0,00",
+      "scadenza_procedura": "23 marzo 2026 ore 9:00",
+      "aree_tematiche": "Tecnologia, Arredi",
+      "campi_compilati": 28,
+      "file": "20260403_Disciplinare-Gara_ITIS-Galileo-Galilei.json"
+    },
+    {
+      "id": "20260223_Disciplinare-Gara_ITIS-Ettore-Majorana-Cassino",
+      "nome_ente": "ITIS Ettore Majorana Cassino - Sede Centrale: Via S. Angelo, 2 (Loc. Folcara) - 03043 Cassino",
+      "data_elaborazione": "2026-04-03",
+      "valore_appalto": "€ 430.274,56 IVA esclusa. Dettaglio per lotto: Lotto 1 (CIG BA86C7A935): € 82.246,11; Lotto 2 (CIG BA86C7BA08): € 81.967,21; Lotto 3 (CIG BA86C7CADB): € 40.983,60; Lotto 4 (CIG BA86C7DBAE): € 655,74; Lotto 5 (CIG BA86C7EC81): € 327,87; Lotto 6 (CIG BA86C7FD54): € 16.393,44; Lotto 7 (CIG BA86C80E27): € 6.967,21; Lotto 8 (CIG BA86C81EFA): € 80.327,86; Lotto 9 (CIG BA86C82FCD): € 57.377,04; Lotto 10 (CIG BA86C830A5): € 21.840,00; Lotto 11 (CIG BA86C84178): € 27.336,03; Lotto 12 (CIG BA86C8524B): € 12.295,08; Lotto 13 (CIG BA86C8631E): € 1.557,37",
+      "scadenza_procedura": "09/03/2026 ore 10:00",
+      "aree_tematiche": "Tecnologia, Arredi",
+      "campi_compilati": 28,
+      "file": "20260223_Disciplinare-Gara_ITIS-Ettore-Majorana-Cassino.json"
+    },
+    {
       "id": "20260309_Disciplinare-Gara_Istituto-Tecnico-Economico-Turismo-e-Tecnologico-E",
       "nome_ente": "Istituto Tecnico Economico Turismo e Tecnologico \"Emanuela Loi\" - Nettuno - RMTD48000N",
-      "data_elaborazione": "2026-04-02",
-      "valore_appalto": "Importo complessivo € 438.600,00 IVA esclusa. Lotto 1 lab Job Safety: CIG BAE8520C7D; Lotto 2 lab Ingegneria finanziaria e Fintech: CIG BAE8521D50; Lotto 3 lab Data Science: CIG BAE8522E23; Lotto 4 lab Cybersecurity: CIG BAE8523EF6; Lotto 5 lab Open lab: CIG BAE8524FC9; Lotto 6 Forniture digitali rete cablaggio: CIG BAE85250A1; Lotto 7 Arredi laboratori: CIG BAE8526174. Oneri sicurezza interferenze: € 0,00",
+      "data_elaborazione": "2026-04-03",
+      "valore_appalto": "€438.600,00 (IVA esclusa) - totale gara. Lotto 1: €138.000,00, Lotto 2: €65.000,00, Lotto 3: €26.000,00, Lotto 4: €44.500,00, Lotto 5: €42.600,00, Lotto 6: €15.000,00, Lotto 7: €107.500,00. Oneri sicurezza interferenze: €0,00. CIG: Lotto 1 BAE8520C7D, Lotto 2 BAE8521D50, Lotto 3 BAE8522E23, Lotto 4 BAE8523EF6, Lotto 5 BAE8524FC9, Lotto 6 BAE85250A1, Lotto 7 BAE8526174",
       "scadenza_procedura": "8 aprile 2026 ore 9:00",
       "aree_tematiche": "Tecnologia, Arredi",
       "campi_compilati": 29,
       "file": "20260309_Disciplinare-Gara_Istituto-Tecnico-Economico-Turismo-e-Tecnologico-E.json"
     },
     {
+      "id": "20260403_Disciplinare-Gara_Istituto-Statale-Istruzione-Superiore-A-Vegni",
+      "nome_ente": "Istituto Statale Istruzione Superiore A. Vegni - Capezzine, 52044 Centoia - Cortona (AR) - codice meccanografico non specificato in questo blocco",
+      "data_elaborazione": "2026-04-03",
+      "valore_appalto": "Valore totale del progetto: € 430.327,80 IVA esclusa. Lotto 1: € 92.300,00; Lotto 2: € 26.000,00; Lotto 3: € 10.700,00; Lotto 4: € 10.600,00; Lotto 6: € 7.400,00; Lotto 7: € 25.100,00; Lotto 8: € 11.800,00; Lotto 9: € 23.000,00; Lotto 10: € 5.800,00; Lotto 11: € 56.667,80; Lotto 12: € 27.700,00; Lotto 13: € 19.100,00; Lotto 14: € 13.600,00; Lotto 16: € 25.560,00. CIG disponibili su piattaforma START per ciascun lotto",
+      "scadenza_procedura": "15 giorni dalla pubblicazione della procedura",
+      "aree_tematiche": "Tecnologia, STEAM, Arredi, Software",
+      "campi_compilati": 26,
+      "file": "20260403_Disciplinare-Gara_Istituto-Statale-Istruzione-Superiore-A-Vegni.json"
+    },
+    {
+      "id": "20260403_Disciplinare-Gara_ISTITUTO-STATALE-DI-ISTRUZIONE-SUPERIORE-G-Salerno",
+      "nome_ente": "ISTITUTO STATALE DI ISTRUZIONE SUPERIORE \"G. Salerno\" - Codice meccanografico: PAIS01700B - 90024 GANGI (PA)",
+      "data_elaborazione": "2026-04-03",
+      "valore_appalto": "Importo totale IVA esclusa: € 890.913,71 - Lotto 1 (CIG: BA2B7BC7E8) Apparecchiature Informatiche CPV 30200000-1: € 495.472,67; Lotto 2 (CIG: BA2B7BD8BB) Arredi CPV 39150000-8: € 207.810,59; Lotto 3 (CIG: BA2B7BE98E) Attrezzature Di Laboratorio CPV 38000000-5: € 187.730,45",
+      "scadenza_procedura": "Termine ricezione offerte: entro le ore 14:00 del giorno 18/03/2026",
+      "aree_tematiche": "Tecnologia, Arredi, STEAM",
+      "campi_compilati": 22,
+      "file": "20260403_Disciplinare-Gara_ISTITUTO-STATALE-DI-ISTRUZIONE-SUPERIORE-G-Salerno.json"
+    },
+    {
+      "id": "20260403_Disciplinare-Gara_Istituto-scolastico-con-codice-meccanografico-PETD",
+      "nome_ente": "Istituto scolastico con codice meccanografico PETD03000D",
+      "data_elaborazione": "2026-04-03",
+      "valore_appalto": "Importo complessivo: € 140.041,00 oltre IVA - Lotto 1: € 70.020,49 oltre IVA al 22%; Lotto 2: € 70.020,49 oltre IVA al 22%; Oneri per la sicurezza: € 0,00",
+      "scadenza_procedura": "Disponibile sulla piattaforma di gara - pubblicazione di n. 15 giorni",
+      "aree_tematiche": "Tecnologia, Arredi",
+      "campi_compilati": 19,
+      "file": "20260403_Disciplinare-Gara_Istituto-scolastico-con-codice-meccanografico-PETD.json"
+    },
+    {
+      "id": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI",
+      "nome_ente": "I.P.S.I.A. L.B. ALBERTI - Istituto Professionale Statale per l'Industria e l'Artigianato L.Battista Alberti - C.M.: RNRI010007",
+      "data_elaborazione": "2026-04-03",
+      "valore_appalto": "Importo complessivo: € 154.000,00 IVA esclusa; Lotto 1 - Laboratorio Saldatura Virtuale: € 67.000,00 IVA esclusa - CIG: BA8D247B6C; Lotto 2 - Laboratorio Elettricità Civile: € 52.000,00 IVA esclusa - CIG: BA8D248C3F; Lotto 3 - Laboratorio Elettricità Industriale: € 35.000,00 IVA esclusa - CIG: BA8D249D12. Costi della sicurezza da interferenze: € 0,00 per tutti i lotti (appalto di forniture senza posa in opera).",
+      "scadenza_procedura": "Disponibile sulla piattaforma di gara",
+      "aree_tematiche": "Tecnologia, STEAM",
+      "campi_compilati": 29,
+      "file": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI.json"
+    },
+    {
+      "id": "20260203_Disciplinare-Gara_IISS-N-BERGESE",
+      "nome_ente": "IISS N. BERGESE - Codice meccanografico: GEIS02300E",
+      "data_elaborazione": "2026-04-03",
+      "valore_appalto": "Importo complessivo € 494.410,86 IVA esclusa - Dettaglio per lotto: Lotto 1 € 45.394,00 CIG BA3B878512; Lotto 2 € 49.975,68 CIG BA3B8795E5; Lotto 3 € 117.961,16 CIG BA3B87A6B8; Lotto 4 € 86.000,00 CIG BA3B87B78B; Lotto 5 € 102.396,93 CIG BA3B87C85E; Lotto 6 € 51.915,61 CIG BA3B87D931; Lotto 7 € 40.767,48 CIG BA3B87EA04",
+      "scadenza_procedura": "Disponibile sulla piattaforma di gara",
+      "aree_tematiche": "Tecnologia",
+      "campi_compilati": 26,
+      "file": "20260203_Disciplinare-Gara_IISS-N-BERGESE.json"
+    },
+    {
       "id": "20260318_Disciplinare-Gara_IIS-L-CEREBOTANI",
       "nome_ente": "IIS L. CEREBOTANI - Codice meccanografico: BSIS03300R",
-      "data_elaborazione": "2026-03-25",
-      "valore_appalto": "€ 390.207,44 IVA esclusa - LOTTO 1 MetroPhisics Lab: € 66.677,45 CIG: BAE84EF410 - LOTTO 2 CyberData Lab: € 148.278,68 CIG: BAE84F04E3 - LOTTO 3 ProtoDesign Lab: € 96.562,79 CIG: BAE84F15B6 - LOTTO 4 DigiFactory Lab: € 78.688,52 CIG: BAE84F2689 - Costi della sicurezza da interferenze: € 0,00 per tutti i lotti",
-      "scadenza_procedura": "Disponibile sulla piattaforma di gara - durata procedimento prevista pari a 5 mesi dalla pubblicazione del bando",
+      "data_elaborazione": "2026-04-03",
+      "valore_appalto": "Importo totale: € 390.207,44 IVA esclusa; LOTTO 1 - MetroPhisics Lab: € 66.677,45 IVA esclusa, CIG: BAE84EF410; LOTTO 2 - CyberData Lab: € 148.278,68 IVA esclusa, CIG: BAE84F04E3; LOTTO 3 - ProtoDesign Lab: € 96.562,79 IVA esclusa, CIG: BAE84F15B6; LOTTO 4 - DigiFactory Lab: € 78.688,52 IVA esclusa, CIG: BAE84F2689",
+      "scadenza_procedura": "Disponibile sulla piattaforma di gara",
       "aree_tematiche": "Tecnologia",
-      "campi_compilati": 22,
+      "campi_compilati": 30,
       "file": "20260318_Disciplinare-Gara_IIS-L-CEREBOTANI.json"
     },
     {
@@ -74,25 +154,7 @@
       "scadenza_procedura": "15 giorni dalla pubblicazione sulla piattaforma MePA",
       "campi_compilati": 14,
       "file": "20260306_Disciplinare-Gara_Istituto-scolastico-con-codice-meccanografico-PETD.json"
-    },
-    {
-      "id": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI",
-      "nome_ente": "I.P.S.I.A. L.B. ALBERTI - Istituto Professionale Statale per l'Industria e l'Artigianato 'L.Battista Alberti' - Codice Meccanografico: RNRI010007",
-      "data_elaborazione": "2026-02-24",
-      "valore_appalto": "Importo complessivo: €154.000,00 IVA esclusa suddiviso in: Lotto 1 (CIG BA8D247B6C): €67.000,00 IVA esclusa; Lotto 2 (CIG BA8D248C3F): €52.000,00 IVA esclusa; Lotto 3 (CIG BA8D249D12): €35.000,00 IVA esclusa. Costi sicurezza da interferenze: €0,00 per tutti i lotti (fornitura senza posa in opera). Finanziamento: fondi PNRR D.M. 215/2024 Missione 4 – Componente 1 – Investimento 3.2 'Scuola 4.0'",
-      "scadenza_procedura": "Disponibile sulla piattaforma di gara; termine ultimo per sopralluogo: 5 marzo 2026",
-      "campi_compilati": 20,
-      "file": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI.json"
-    },
-    {
-      "id": "20260223_Disciplinare-Gara_ITIS-Ettore-Majorana-Cassino",
-      "nome_ente": "ITIS Ettore Majorana Cassino - Sede Centrale: Via S. Angelo, 2 (Loc. Folcara) - 03043 Cassino",
-      "data_elaborazione": "2026-02-23",
-      "valore_appalto": "Importo totale stimato: €430.274,56 (IVA esclusa). Dettaglio per lotto: Lotto 1: €82.246,11; Lotto 2: €81.967,21; Lotto 3: €40.983,60; Lotto 4: €655,74; Lotto 5: €327,87; Lotto 6: €16.393,44; Lotto 7: €6.967,21; Lotto 8: €80.327,86; Lotto 9: €57.377,04; Lotto 10: €21.840,00; Lotto 11: €27.336,03; Lotto 12: €12.295,08; Lotto 13: €1.557,37. Non sono previsti costi della manodopera trattandosi di fornitura di beni",
-      "scadenza_procedura": "Ore 10:00 del 09/03/2026",
-      "campi_compilati": 20,
-      "file": "20260223_Disciplinare-Gara_ITIS-Ettore-Majorana-Cassino.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-04-02T18:39:12.598750"
+  "ultimo_aggiornamento": "2026-04-03T12:21:10.402988"
 }
