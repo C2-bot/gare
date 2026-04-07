@@ -1248,6 +1248,8 @@ const NOT_FOUND = "Non specificato nel documento";
 const MAX_PRODOTTI_PER_CATEGORIA = 30;
 
 let indiceProdottiCache = null;
+let indiceProdottiTs = 0;
+const INDICE_TTL = 24 * 60 * 60 * 1000; // 24 ore
 
 const PROMPT_APPROFONDIMENTO = `Sei un consulente commerciale esperto di C2 Group (www.c2group.it), azienda che fornisce tecnologia, arredi e materiale didattico alle scuole italiane.
 
@@ -1606,10 +1608,11 @@ function unisciRisultati(lista) {
 //  APPROFONDIMENTO PRODOTTI CON CLAUDE
 // ═══════════════════════════════════════════════════
 async function caricaIndiceProdotti() {
-  if (indiceProdottiCache) return indiceProdottiCache;
-  const resp = await fetch("data/indice_prodotti.json");
+  if (indiceProdottiCache && (Date.now() - indiceProdottiTs) < INDICE_TTL) return indiceProdottiCache;
+  const resp = await fetch("data/indice_prodotti.json", { cache: "no-cache" });
   if (!resp.ok) throw new Error("Impossibile caricare l'indice prodotti");
   indiceProdottiCache = await resp.json();
+  indiceProdottiTs = Date.now();
   return indiceProdottiCache;
 }
 
@@ -2547,6 +2550,28 @@ function switchTab(tab) {
   }
 }
 
+function estraiChiaveEnte(gara) {
+  // Estrai codice meccanografico (es. RMTF090003) dal nome_ente o dall'id
+  const testo = (gara.nome_ente || "") + " " + (gara.id || "");
+  const match = testo.match(/\b([A-Za-z]{4}\d{5}[A-Za-z0-9])\b/);
+  if (match) return match[1].toUpperCase();
+  // Fallback: slug dell'ente dall'ID (parte dopo la data e "Disciplinare-Gara_")
+  const slug = (gara.id || "").replace(/^\d{8}_Disciplinare-Gara_/, "").toUpperCase();
+  return slug || gara.id;
+}
+
+function deduplicaGare(gare) {
+  const mappa = new Map();
+  for (const g of gare) {
+    const chiave = estraiChiaveEnte(g);
+    const esistente = mappa.get(chiave);
+    if (!esistente || (g.data_elaborazione > esistente.data_elaborazione)) {
+      mappa.set(chiave, g);
+    }
+  }
+  return [...mappa.values()].sort((a, b) => b.data_elaborazione.localeCompare(a.data_elaborazione));
+}
+
 async function caricaArchivio() {
   const list = document.getElementById("archive-list");
   list.innerHTML = '<div class="sidebar-loading">Caricamento archivio...</div>';
@@ -2559,6 +2584,9 @@ async function caricaArchivio() {
     ]);
     if (!resp.ok) throw new Error("Archivio non ancora disponibile");
     archivioData = await resp.json();
+
+    // Deduplica gare: tiene solo la versione più recente per lo stesso ente
+    archivioData.gare = deduplicaGare(archivioData.gare);
 
     // Carica tutti i JSON in parallelo per ricerca full-text
     await Promise.all(archivioData.gare.map(async g => {
