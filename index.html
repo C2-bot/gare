@@ -1616,15 +1616,66 @@ async function caricaIndiceProdotti() {
   return indiceProdottiCache;
 }
 
+// Mappa sotto-categorie generiche (dal prompt Claude) → categorie reali indice C2
+const MAPPA_SOTTO_CATEGORIE = {
+  "notebook e portatili": ["Notebook", "Chromebook"],
+  "desktop e workstation": ["Personal Computer (PC)", "Workstation"],
+  "monitor e display": ["Monitor", "Monitor Touch", "Monitor Grande Formato"],
+  "tablet": ["Tablet ed eBook"],
+  "stampanti e scanner": ["Stampa Laser", "Stampa Inkjet", "Scanner"],
+  "stampanti 3d": ["Stampanti 3D"],
+  "proiettori e lavagne interattive": ["Videoproiettori", "Monitor Touch", "Lavagne e Pannelli"],
+  "cuffie audio e videoconferenza": ["Audio", "Videoconferenza", "Cuffie e Microfoni"],
+  "tastiere mouse e periferiche": ["Tastiere e Mouse", "Accessori per Computer"],
+  "networking e infrastruttura": ["Dispositivi di Rete", "Cavi"],
+  "webcam e fotocamere": ["Fotografia e Video"],
+  "software didattico": ["Contenuti Didattici", "Piattaforma Scolastica", "Gamification"],
+  "software modellazione 3d": ["CAD e CAM"],
+  "arredi laboratorio e aule": ["Tavoli", "Sedute e Sedie", "Contenitori e Armadi", "Accessori Arredo", "Arredi per STEAM"],
+  "banchi e tavoli": ["Tavoli"],
+  "sedie e sedute": ["Sedute e Sedie", "Sedute Morbide"],
+  "armadi e scaffalature": ["Contenitori e Armadi"],
+  "kit scientifici e laboratorio": ["Chimica", "Fisica", "Laboratorio di Biologia", "Ambiente e Green Economy", "Laboratorio Agroalimentare", "Medicina"],
+  "strumenti scientifici e laboratorio": ["Chimica", "Fisica", "Laboratorio di Biologia", "Microscopi", "Microscopi e Telescopi", "Laboratorio di Elettronica"],
+  "robotica e coding": ["Robotica e Coding", "Laboratorio di Informatica", "Coding e Stem/Steam"],
+  "strumenti musicali": ["Altri Strumenti Musicali", "Pianoforti e Tastiere", "Strumenti a Corda", "Digital Music"],
+  "fonoassorbenti": ["Fonoassorbenti"],
+  "arredi da esterno": ["Arredi da Esterno"],
+  "plotter e stampa grande formato": ["Plotter e Stampa Grande Formato"],
+  "tavolette grafiche": ["Tavolette Grafiche", "Tavolette Grafiche e Scrittura"],
+  "realta virtuale": ["Realtà Virtuale"],
+  "laboratorio di lingue": ["Laboratorio di Lingue", "Studio delle Lingue"],
+  "laboratorio di moda": ["Laboratorio di Moda"],
+  "laboratorio di elettronica": ["Laboratorio di Elettronica", "Laboratorio di Telecomunicazioni"],
+  "laboratorio di industria": ["Laboratorio di Industria"],
+  "inclusione e accessibilita": ["Inclusione - Accessibilità"],
+};
+
 function filtraProdottiPerGara(indice, dati) {
   const sottoCategorie = (dati.sotto_categorie_merceologiche || "")
     .split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
   if (!sottoCategorie.length) return { filtrati: [], perCategoria: {} };
 
+  // Espandi le sotto-categorie generiche nelle categorie reali C2
+  const categorieReali = new Set();
+  for (const sc of sottoCategorie) {
+    const mappate = MAPPA_SOTTO_CATEGORIE[sc];
+    if (mappate) {
+      mappate.forEach(c => categorieReali.add(c.toLowerCase()));
+    } else {
+      categorieReali.add(sc);
+    }
+  }
+
+  // Filtra anche per area tematica come fallback
+  const aree = (dati.aree_tematiche || "").split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+
   const perCategoria = {};
   for (const p of indice.prodotti) {
     const sc = (p.sc || "").toLowerCase();
-    if (sottoCategorie.some(s => sc.includes(s) || s.includes(sc))) {
+    const area = (p.a || "").toLowerCase();
+    const matchCat = categorieReali.has(sc) || [...categorieReali].some(c => sc.includes(c) || c.includes(sc));
+    if (matchCat) {
       const catKey = p.sc || "Altro";
       if (!perCategoria[catKey]) perCategoria[catKey] = [];
       perCategoria[catKey].push(p);
