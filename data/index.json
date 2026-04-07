@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260203_Disciplinare-Gara_IISS-NBERGESE",
+      "nome_ente": "IISS N.BERGESE - C.M.: GEIS02300E - C.F.: 95245910104",
+      "data_elaborazione": "2026-04-07",
+      "valore_appalto": "€ 494.410,86 (IVA esclusa). Lotto 1: € 45.394,00 IVA esclusa - CIG:BA3B878512; Lotto 2: € 49.975,68 IVA esclusa - CIG: BA3B8795E5; Lotto 3: € 117.961,16 IVA esclusa - CIG: BA3B87A6B8; Lotto 4: € 86.000,00 IVA esclusa - CIG:BA3B87B78B; Lotto 5: €102.396,93 IVA esclusa - CIG: BA3B87C85E; Lotto 6: € 51.915,61 IVA esclusa - CIG:BA3B87D931; Lotto 7: € 40.767,48 IVA esclusa - CIG: BA3B87EA04",
+      "scadenza_procedura": "Disponibile sulla piattaforma di gara",
+      "aree_tematiche": "Tecnologia, Software, Formazione, STEAM",
+      "campi_compilati": 31,
+      "file": "20260203_Disciplinare-Gara_IISS-NBERGESE.json"
+    },
+    {
       "id": "20260403_Disciplinare-Gara_Non-specificato-nel-documento",
       "nome_ente": "Non specificato nel documento",
       "data_elaborazione": "2026-04-03",
@@ -81,16 +91,6 @@
       "file": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI.json"
     },
     {
-      "id": "20260203_Disciplinare-Gara_IISS-N-BERGESE",
-      "nome_ente": "IISS N. BERGESE - Codice meccanografico: GEIS02300E",
-      "data_elaborazione": "2026-04-03",
-      "valore_appalto": "Importo complessivo € 494.410,86 IVA esclusa - Dettaglio per lotto: Lotto 1 € 45.394,00 CIG BA3B878512; Lotto 2 € 49.975,68 CIG BA3B8795E5; Lotto 3 € 117.961,16 CIG BA3B87A6B8; Lotto 4 € 86.000,00 CIG BA3B87B78B; Lotto 5 € 102.396,93 CIG BA3B87C85E; Lotto 6 € 51.915,61 CIG BA3B87D931; Lotto 7 € 40.767,48 CIG BA3B87EA04",
-      "scadenza_procedura": "Disponibile sulla piattaforma di gara",
-      "aree_tematiche": "Tecnologia",
-      "campi_compilati": 26,
-      "file": "20260203_Disciplinare-Gara_IISS-N-BERGESE.json"
-    },
-    {
       "id": "20260318_Disciplinare-Gara_IIS-L-CEREBOTANI",
       "nome_ente": "IIS L. CEREBOTANI - Codice meccanografico: BSIS03300R",
       "data_elaborazione": "2026-04-03",
@@ -101,5 +101,5 @@
       "file": "20260318_Disciplinare-Gara_IIS-L-CEREBOTANI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-04-03T12:21:10.402988"
+  "ultimo_aggiornamento": "2026-04-07T17:22:35.560723"
 }
