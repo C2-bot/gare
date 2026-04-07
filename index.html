@@ -1682,11 +1682,22 @@ function filtraProdottiPerGara(indice, dati) {
     }
   }
 
-  // Max N prodotti per categoria (ordinati per prezzo crescente per varietà)
+  // Max N prodotti per categoria — campionamento rappresentativo per fascia di prezzo
   const filtrati = [];
   for (const [cat, prods] of Object.entries(perCategoria)) {
-    prods.sort((a, b) => a.p - b.p);
-    const selezionati = prods.slice(0, MAX_PRODOTTI_PER_CATEGORIA);
+    let selezionati;
+    if (prods.length <= MAX_PRODOTTI_PER_CATEGORIA) {
+      selezionati = prods;
+    } else {
+      // Campiona uniformemente lungo la distribuzione di prezzo
+      prods.sort((a, b) => a.p - b.p);
+      selezionati = [];
+      const step = prods.length / MAX_PRODOTTI_PER_CATEGORIA;
+      for (let i = 0; i < MAX_PRODOTTI_PER_CATEGORIA; i++) {
+        selezionati.push(prods[Math.floor(i * step)]);
+      }
+    }
+    selezionati.sort((a, b) => a.p - b.p);
     perCategoria[cat] = selezionati;
     filtrati.push(...selezionati);
   }
