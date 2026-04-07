@@ -300,9 +300,18 @@
   .drop-sub { font-size: 13px; color: var(--gray); }
   .drop-sub span { color: var(--blue-mid); text-decoration: underline; cursor: pointer; }
   #file-input { display: none; }
+  .files-list { display: none; margin-top: 20px; }
+  .files-list.visible { display: block; }
+  .files-header {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--blue-mid);
+    margin-bottom: 8px;
+    padding-left: 4px;
+  }
   .file-selected {
     display: none;
-    margin-top: 20px;
+    margin-top: 8px;
     background: var(--white);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -822,58 +831,6 @@
     margin-right: 8px;
     flex-shrink: 0;
   }
-  /* Legenda scoring */
-  .score-legenda-toggle {
-    display: block;
-    width: 100%;
-    padding: 10px 20px;
-    background: var(--off);
-    border: none;
-    border-top: 1px solid var(--border);
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--blue-mid);
-    cursor: pointer;
-    text-align: left;
-  }
-  .score-legenda-toggle:hover { background: var(--light-blue); }
-  .score-legenda-body {
-    padding: 16px 20px;
-    font-size: 12px;
-    color: var(--text);
-    line-height: 1.6;
-    border-top: 1px solid var(--border);
-  }
-  .score-legenda-body h4 {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 12px;
-    color: var(--blue);
-    margin: 12px 0 4px;
-  }
-  .score-legenda-body h4:first-child { margin-top: 0; }
-  .score-legenda-body p { margin: 0 0 8px; }
-  .score-fasce {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 8px;
-  }
-  .score-fascia-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 6px;
-    background: var(--off);
-  }
-  .score-fascia-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 3px;
-  }
-
   /* Config pesi modal */
   .pesi-modal-overlay {
     position: fixed;
@@ -1221,8 +1178,9 @@ const CHUNK_SIZE = 35000;
 const NOT_FOUND = "Non specificato nel documento";
 
 const SYSTEM_PROMPT = `Sei un esperto analista di appalti pubblici italiani.
-Analizza il Disciplinare di Gara fornito ed estrai esattamente i seguenti 30 campi in formato JSON.
-Per ogni campo non trovato nel documento, usa esattamente la stringa "Non specificato nel documento".
+Analizza i documenti di gara forniti (possono includere Disciplinare, Capitolato Tecnico, Allegati tecnici) ed estrai esattamente i seguenti 30 campi in formato JSON.
+Se sono presenti più documenti, integra le informazioni da tutti: i dati tecnici (prodotti, specifiche, installazione) spesso sono nel Capitolato, quelli amministrativi (scadenze, garanzie, requisiti) nel Disciplinare.
+Per ogni campo non trovato in nessun documento, usa esattamente la stringa "Non specificato nel documento".
 Rispondi SOLO con il JSON, senza testo aggiuntivo, senza markdown, senza backtick.
 
 Campi richiesti:
@@ -1257,8 +1215,8 @@ Campi richiesti:
   "varianti": "Varianti ammesse: si/no",
   "penali": "Penali previste per inadempimento o ritardo — indica percentuale o importo, condizioni di applicazione (es. ritardo consegna, difformità), base di calcolo e tetto massimo se specificati",
   "note_aggiuntive": "Altre informazioni rilevanti non coperte dai campi precedenti",
-  "aree_tematiche": "Classifica la gara in una o più delle seguenti categorie, SOLO se esplicitamente pertinenti al contenuto del documento: Tecnologia, Arredi, Software, Formazione, Materiale Didattico, Consumabili, STEAM, Altro. Separa con virgola se più di una. Se non è chiaro, indica Altro.",
-  "sotto_categorie_merceologiche": "Classifica i prodotti/beni richiesti dalla gara in una o più delle seguenti sotto-categorie, SOLO quelle esplicitamente pertinenti. Separa con virgola: Notebook e portatili, Desktop e workstation, Tablet, Monitor e display, Stampanti e scanner, Proiettori e lavagne interattive, Cuffie audio e videoconferenza, Tastiere mouse e periferiche, Networking e infrastruttura, UPS e alimentatori, Webcam e fotocamere, Banchi e tavoli, Sedie e sedute, Armadi e scaffalature, Arredi laboratorio e aule, Software didattico, Software gestionale e ufficio, Software modellazione 3D, Robotica e coding, Stampanti 3D, Kit scientifici e laboratorio, Strumenti musicali, Giochi educativi e didattici, Materiale psicomotorio e sport, Cancelleria e carta, Toner e consumabili stampa, Batterie e alimentazione."
+  "aree_tematiche": "Classifica la gara in una o più delle seguenti categorie, SOLO se esplicitamente pertinenti al contenuto del documento: Tecnologia, Arredi, Software, Formazione, Materiale Didattico, STEAM, Laboratori, Strumenti Musicali, Altro. Separa con virgola se più di una. Se non è chiaro, indica Altro.",
+  "sotto_categorie_merceologiche": "Classifica i prodotti/beni richiesti dalla gara nelle sotto-categorie del catalogo C2 Group, SOLO quelle esplicitamente pertinenti. Separa con virgola. Sotto-categorie disponibili per area: TECNOLOGIA: Accessori per Computer, Audio, Cavi, Chromebook, Climatizzazione, Dispositivi di Rete, Etichettatrici, Fotografia e Video, Gaming, Manutenzione, Microscopi e Telescopi, Monitor, Monitor Grande Formato, Monitor Touch, Notebook, Personal Computer (PC), Pile e Torce, Plotter e Stampa Grande Formato, Scanner, Stampa Inkjet, Stampa Laser, Stampanti 3D, Tablet ed eBook, Tastiere e Mouse, Tavolette Grafiche e Scrittura, Televisioni e Accessori TV, Videoconferenza, Videoproiettori, Workstation, Armadi di Ricarica, Carrelli di Ricarica. ARREDI: Accessori Arredo, Arredi da Esterno, Arredi per STEAM, Biblioteche, Contenitori e Armadi, Fonoassorbenti, Lavagne e Pannelli, Materassi, Sedute e Sedie, Sedute Morbide, Tappeti, Tavoli, Tribune e Panche. MATERIALE DIDATTICO: Attrezzature Sportive, Cancelleria, Costruzioni, Creatività, Giochi da Giardino, Giochi Didattici, Giochi Simbolici, Matematica e Geometria, Musica, Puzzle e Incastri, Scienze, Sviluppo del Linguaggio, Sviluppo Logico. SOFTWARE: CAD e CAM, Coding e Stem/Steam, Contenuti Didattici, Creazione Guidata Siti Web, Facilitatori per Segreteria, Gamification, Gestione e Sicurezza Dispositivi, Inclusione - Accessibilità, Intelligenza Artificiale, Piattaforma Scolastica, Realtà Aumentata e Virtuale, Storytelling, Studio delle Lingue, Video - Photo. STEAM: Fotografia e Video, Microscopi, Plotter e Stampa Grande Formato, Realtà Virtuale, Robotica e Coding, Scanner, Stampanti 3D, Tablet, Tavolette Grafiche, Telescopi. LABORATORI: Laboratorio di Informatica, Laboratorio di Industria, Laboratorio di Musica, Laboratorio di Arte, Laboratorio di Elettronica, Laboratorio di Moda, Laboratorio di Biologia, Laboratorio di Lingue, Laboratorio di Grafica, Laboratorio di Progettazione, Laboratorio di Costruzioni, Laboratorio di Telecomunicazioni, Laboratorio Agroalimentare, Fisica, Chimica, Medicina, Enogastronomia, Alberghiero, Turismo, Ambiente e Green Economy, Energie Rinnovabili, Scienze. STRUMENTI MUSICALI: Altri Strumenti Musicali, Cuffie e Microfoni, Cavi, Digital Music, Pianoforti e Tastiere, Podcast, Strumenti a Corda. FORMAZIONE: Formazione alla Transizione Digitale, Benessere nella Scuola."
 }`;
 
 // ═══════════════════════════════════════════════════
@@ -1391,35 +1349,28 @@ document.getElementById("btn-nuova").addEventListener("click", mostraUpload);
 // ═══════════════════════════════════════════════════
 //  SCREEN: UPLOAD
 // ═══════════════════════════════════════════════════
-let fileScelto = null;
+let fileScelti = [];
 
 function mostraUpload() {
   state.corrente = null;
-  fileScelto = null;
+  fileScelti = [];
   aggiornaHistoryUI();
 
   document.getElementById("main-area").innerHTML = `
     <div class="upload-wrapper">
       <div class="page-heading">Nuova analisi</div>
-      <div class="page-sub">Carica il PDF del Disciplinare di Gara per ottenere la scheda riepilogativa.</div>
+      <div class="page-sub">Carica uno o più PDF della stessa gara (Disciplinare, Capitolato, Allegati) per ottenere un'analisi unificata.</div>
 
       <div class="drop-zone" id="drop-zone">
         <span class="drop-icon">&#128196;</span>
-        <div class="drop-title">Trascina qui il PDF</div>
-        <div class="drop-sub">oppure <span id="browse-link">seleziona dal computer</span></div>
-        <input type="file" id="file-input" accept=".pdf">
+        <div class="drop-title">Trascina qui i PDF</div>
+        <div class="drop-sub">oppure <span id="browse-link">seleziona dal computer</span> (anche più file)</div>
+        <input type="file" id="file-input" accept=".pdf" multiple>
       </div>
 
-      <div class="file-selected" id="file-selected">
-        <div class="file-icon">&#128203;</div>
-        <div class="file-info">
-          <div class="file-name" id="file-name"></div>
-          <div class="file-size" id="file-size"></div>
-        </div>
-        <button class="btn-remove" id="btn-remove">&#10005;</button>
-      </div>
+      <div class="files-list" id="files-list"></div>
 
-      <button class="btn-analyze" id="btn-analyze">Analizza Disciplinare</button>
+      <button class="btn-analyze" id="btn-analyze">Analizza Documenti</button>
     </div>
   `;
 
@@ -1430,33 +1381,62 @@ function mostraUpload() {
   dz.addEventListener("drop", e => {
     e.preventDefault();
     dz.classList.remove("drag-over");
-    const f = e.dataTransfer.files[0];
-    if (f && f.type === "application/pdf") impostaFile(f);
+    const nuovi = [...e.dataTransfer.files].filter(f => f.type === "application/pdf");
+    if (nuovi.length) aggiungiFile(nuovi);
   });
 
   document.getElementById("browse-link").addEventListener("click", () =>
     document.getElementById("file-input").click()
   );
   document.getElementById("file-input").addEventListener("change", e => {
-    if (e.target.files[0]) impostaFile(e.target.files[0]);
+    const nuovi = [...e.target.files].filter(f => f.type === "application/pdf");
+    if (nuovi.length) aggiungiFile(nuovi);
+    e.target.value = "";
   });
 
-  document.getElementById("btn-remove").addEventListener("click", rimuoviFile);
   document.getElementById("btn-analyze").addEventListener("click", avviaAnalisi);
 }
 
-function impostaFile(file) {
-  fileScelto = file;
-  document.getElementById("file-name").textContent = file.name;
-  document.getElementById("file-size").textContent = formatSize(file.size);
-  document.getElementById("file-selected").classList.add("visible");
-  document.getElementById("btn-analyze").classList.add("visible");
+function aggiungiFile(nuoviFile) {
+  for (const f of nuoviFile) {
+    if (!fileScelti.some(x => x.name === f.name && x.size === f.size)) {
+      fileScelti.push(f);
+    }
+  }
+  aggiornaListaFile();
 }
 
-function rimuoviFile() {
-  fileScelto = null;
-  document.getElementById("file-selected").classList.remove("visible");
-  document.getElementById("btn-analyze").classList.remove("visible");
+function rimuoviFileDaLista(idx) {
+  fileScelti.splice(idx, 1);
+  aggiornaListaFile();
+}
+
+function aggiornaListaFile() {
+  const container = document.getElementById("files-list");
+  const btn = document.getElementById("btn-analyze");
+  if (!fileScelti.length) {
+    container.innerHTML = "";
+    container.classList.remove("visible");
+    btn.classList.remove("visible");
+    return;
+  }
+  container.classList.add("visible");
+  btn.classList.add("visible");
+  btn.textContent = fileScelti.length === 1 ? "Analizza Disciplinare" : `Analizza ${fileScelti.length} documenti`;
+  const totSize = fileScelti.reduce((s, f) => s + f.size, 0);
+  container.innerHTML = `
+    <div class="files-header">${fileScelti.length} documento/i selezionato/i &mdash; ${formatSize(totSize)}</div>
+    ${fileScelti.map((f, i) => `
+      <div class="file-selected visible">
+        <div class="file-icon">&#128203;</div>
+        <div class="file-info">
+          <div class="file-name">${escHtml(f.name)}</div>
+          <div class="file-size">${formatSize(f.size)}</div>
+        </div>
+        <button class="btn-remove" onclick="rimuoviFileDaLista(${i})">&#10005;</button>
+      </div>
+    `).join("")}
+  `;
 }
 
 function formatSize(bytes) {
@@ -1501,7 +1481,7 @@ async function chiamaApi(testo, blocco, totale) {
       model: CLAUDE_MODEL,
       max_tokens: 4096,
       system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: "Analizza il seguente Disciplinare di Gara:\n\n" + contesto + testo }],
+      messages: [{ role: "user", content: "Analizza i seguenti documenti di gara (possono includere Disciplinare, Capitolato Tecnico, Allegati). Estrai le informazioni richieste integrando i dati da tutti i documenti forniti:\n\n" + contesto + testo }],
     }),
   });
 
@@ -1533,35 +1513,44 @@ function unisciRisultati(lista) {
 //  ANALISI
 // ═══════════════════════════════════════════════════
 async function avviaAnalisi() {
-  if (!fileScelto) return;
-  const nomeFile = fileScelto.name;
+  if (!fileScelti.length) return;
+  const nomiFile = fileScelti.map(f => f.name);
+  const etichetta = nomiFile.length === 1 ? nomiFile[0] : `${nomiFile.length} documenti`;
 
-  mostraProcessing(nomeFile);
+  mostraProcessing(etichetta);
 
   try {
-    // 1. Estrai testo dal PDF
-    const pdfData = await estraiTestoPdf(fileScelto);
-    const testo = pdfData.text;
+    // 1. Estrai testo da tutti i PDF
+    let testoCompleto = "";
+    let pagineTotali = 0;
+    for (let i = 0; i < fileScelti.length; i++) {
+      const pdfData = await estraiTestoPdf(fileScelti[i]);
+      if (fileScelti.length > 1) {
+        testoCompleto += `\n\n═══════════════════════════════════════\n  DOCUMENTO ${i + 1}/${fileScelti.length}: ${fileScelti[i].name}\n═══════════════════════════════════════\n\n`;
+      }
+      testoCompleto += pdfData.text;
+      pagineTotali += pdfData.numPages;
+    }
 
-    if (!testo || testo.trim().length < 200) {
-      throw new Error("PDF non leggibile o testo troppo breve. Verificare che non sia un documento scansionato.");
+    if (!testoCompleto || testoCompleto.trim().length < 200) {
+      throw new Error("PDF non leggibili o testo troppo breve. Verificare che non siano documenti scansionati.");
     }
 
     setStep(1);
 
     // 2. Suddividi in blocchi se necessario
     let blocchi = [];
-    if (testo.length <= CHUNK_SIZE) {
-      blocchi = [testo];
+    if (testoCompleto.length <= CHUNK_SIZE) {
+      blocchi = [testoCompleto];
     } else {
       let inizio = 0;
-      while (inizio < testo.length) {
+      while (inizio < testoCompleto.length) {
         let fine = inizio + CHUNK_SIZE;
-        if (fine < testo.length) {
-          const finePara = testo.lastIndexOf("\n", fine);
+        if (fine < testoCompleto.length) {
+          const finePara = testoCompleto.lastIndexOf("\n", fine);
           if (finePara > inizio + CHUNK_SIZE / 2) fine = finePara;
         }
-        blocchi.push(testo.slice(inizio, fine));
+        blocchi.push(testoCompleto.slice(inizio, fine));
         inizio = fine;
       }
     }
@@ -1581,9 +1570,11 @@ async function avviaAnalisi() {
 
     // 4. Salva in storico
     const voce = {
-      nomeFile,
+      nomeFile: nomiFile.length === 1 ? nomiFile[0] : nomiFile.join(" + "),
+      nomiFile,
       dati: datiFinal,
-      pagine: pdfData.numPages,
+      pagine: pagineTotali,
+      numDocumenti: fileScelti.length,
       blocchi: blocchi.length,
       ts: new Date().toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }),
       compilati: Object.values(datiFinal).filter(v => v !== NOT_FOUND).length,
@@ -1646,7 +1637,7 @@ function mostraRisultati(idx) {
   state.corrente = idx;
   aggiornaHistoryUI();
   const voce = state.storico[idx];
-  const { dati, nomeFile, pagine, compilati, blocchi, ts } = voce;
+  const { dati, nomeFile, pagine, compilati, blocchi, ts, numDocumenti } = voce;
 
   const sezioniHtml = SEZIONI.map(sez => `
     <div class="section-card">
@@ -1663,6 +1654,8 @@ function mostraRisultati(idx) {
       </div>
     </div>`).join("");
 
+  const docLabel = numDocumenti > 1 ? `${numDocumenti} documenti` : "documento singolo";
+
   document.getElementById("main-area").innerHTML = `
     <div class="results-header">
       <div>
@@ -1670,7 +1663,7 @@ function mostraRisultati(idx) {
         <div class="results-meta">
           ${pagine} pag. &nbsp;·&nbsp;
           <span>${compilati}/23 campi compilati</span> &nbsp;·&nbsp;
-          ${blocchi > 1 ? blocchi + " blocchi" : "documento singolo"} &nbsp;·&nbsp;
+          ${docLabel}${blocchi > 1 ? ` (${blocchi} blocchi)` : ""} &nbsp;·&nbsp;
           ore ${ts}
         </div>
       </div>
@@ -1876,16 +1869,55 @@ const SCORE_CONFIG_DEFAULT = {
     E: { min: 0, max: 19, label: "Non adatta al catalogo C2", colore: "#C62828" },
   },
   prodotti_per_sotto_categoria: {
-    "Notebook e portatili": 772, "Desktop e workstation": 332, "Tablet": 177,
-    "Monitor e display": 1097, "Stampanti e scanner": 362, "Proiettori e lavagne interattive": 141,
-    "Cuffie audio e videoconferenza": 443, "Tastiere mouse e periferiche": 897,
-    "Networking e infrastruttura": 135, "UPS e alimentatori": 262, "Webcam e fotocamere": 70,
-    "Banchi e tavoli": 183, "Sedie e sedute": 194, "Armadi e scaffalature": 86,
-    "Arredi laboratorio e aule": 1253, "Software didattico": 145, "Software gestionale e ufficio": 120,
-    "Software modellazione 3D": 18, "Robotica e coding": 45, "Stampanti 3D": 13,
-    "Kit scientifici e laboratorio": 262, "Strumenti musicali": 64, "Giochi educativi e didattici": 193,
-    "Materiale psicomotorio e sport": 33, "Cancelleria e carta": 2364,
-    "Toner e consumabili stampa": 1577, "Batterie e alimentazione": 107,
+    // Tecnologia (6.005)
+    "Accessori per Computer": 670, "Audio": 396, "Cavi": 259, "Chromebook": 20,
+    "Climatizzazione": 6, "Dispositivi di Rete": 16, "Etichettatrici": 3,
+    "Fotografia e Video": 25, "Gaming": 28, "Manutenzione": 17,
+    "Microscopi e Telescopi": 13, "Monitor": 789, "Monitor Grande Formato": 59,
+    "Monitor Touch": 320, "Notebook": 557, "Personal Computer (PC)": 285,
+    "Pile e Torce": 2, "Plotter e Stampa Grande Formato": 42, "Scanner": 82,
+    "Stampa Inkjet": 412, "Stampa Laser": 1402, "Stampanti 3D": 13,
+    "Tablet ed eBook": 184, "Tastiere e Mouse": 394,
+    "Tavolette Grafiche e Scrittura": 32, "Televisioni e Accessori TV": 82,
+    "Videoconferenza": 11, "Videoproiettori": 119, "Workstation": 28,
+    "Armadi di Ricarica": 4, "Carrelli di Ricarica": 2,
+    // Arredi (1.746)
+    "Accessori Arredo": 32, "Arredi da Esterno": 73, "Arredi per STEAM": 8,
+    "Biblioteche": 1, "Contenitori e Armadi": 86, "Fonoassorbenti": 66,
+    "Lavagne e Pannelli": 17, "Materassi": 8, "Sedute e Sedie": 133,
+    "Sedute Morbide": 1143, "Tappeti": 21, "Tavoli": 158,
+    // Materiale Didattico (2.629)
+    "Attrezzature Sportive": 10, "Cancelleria": 2382, "Costruzioni": 4,
+    "Creatività": 47, "Giochi da Giardino": 21, "Giochi Didattici": 52,
+    "Giochi Simbolici": 53, "Matematica e Geometria": 8, "Musica": 14,
+    "Puzzle e Incastri": 3, "Scienze": 16, "Sviluppo del Linguaggio": 9,
+    "Sviluppo Logico": 10,
+    // Software (280)
+    "CAD e CAM": 18, "Coding e Stem/Steam": 10, "Contenuti Didattici": 78,
+    "Creazione Guidata Siti Web": 5, "Facilitatori per Segreteria": 29,
+    "Gamification": 14, "Gestione e Sicurezza Dispositivi": 3,
+    "Inclusione - Accessibilità": 9, "Intelligenza Artificiale": 15,
+    "Piattaforma Scolastica": 34, "Realtà Aumentata e Virtuale": 2,
+    "Storytelling": 42, "Studio delle Lingue": 1, "Video - Photo": 20,
+    // STEAM (178)
+    "Robotica e Coding": 128, "Microscopi": 17, "Realtà Virtuale": 8,
+    "Tavolette Grafiche": 2, "Telescopi": 3,
+    // Laboratori (503)
+    "Laboratorio di Informatica": 19, "Laboratorio di Industria": 45,
+    "Laboratorio di Musica": 5, "Laboratorio di Arte": 6,
+    "Laboratorio di Elettronica": 14, "Laboratorio di Moda": 14,
+    "Laboratorio di Biologia": 14, "Laboratorio di Lingue": 8,
+    "Laboratorio di Grafica": 7, "Laboratorio di Progettazione": 9,
+    "Laboratorio di Costruzioni": 3, "Laboratorio di Telecomunicazioni": 5,
+    "Laboratorio Agroalimentare": 5, "Fisica": 41, "Chimica": 24,
+    "Medicina": 17, "Enogastronomia": 14, "Alberghiero": 6,
+    "Turismo": 2, "Ambiente e Green Economy": 12, "Energie Rinnovabili": 5,
+    // Strumenti Musicali (177)
+    "Altri Strumenti Musicali": 107, "Cuffie e Microfoni": 16,
+    "Digital Music": 14, "Pianoforti e Tastiere": 3, "Podcast": 9,
+    "Strumenti a Corda": 12,
+    // Formazione (4)
+    "Formazione alla Transizione Digitale": 1, "Benessere nella Scuola": 3,
   },
 };
 
@@ -1916,11 +1948,10 @@ function calcolaCriticita(dati) {
 
   // 2. Penali
   const pen = (dati.penali || NF).toLowerCase();
-  if (pen === NF.toLowerCase() || pen.includes("non specificat")) fattori.penali = 50; // ignoto = neutro
-  else if (pen.includes("non previste") || pen.includes("nessuna")) fattori.penali = 90;
-  else if (pen.includes("tetto") || pen.includes("massimo") || pen.includes("max")) fattori.penali = 55;
-  else if (pen.includes("1%") || pen.includes("0,")) fattori.penali = 60;
-  else fattori.penali = 30;
+  if (pen === NF.toLowerCase() || pen.includes("non previste") || pen.includes("non specificat")) fattori.penali = 80;
+  else if (pen.includes("tetto") || pen.includes("massimo") || pen.includes("max")) fattori.penali = 60;
+  else if (pen.includes("1%") || pen.includes("0,")) fattori.penali = 70;
+  else fattori.penali = 35;
 
   // 3. Tempi consegna
   const tempi = dati.data_limite_consegna_beni || NF;
@@ -1934,11 +1965,10 @@ function calcolaCriticita(dati) {
 
   // 4. Requisiti tecnici
   const req = (dati.requisiti_capacita_tecnica_professionale || NF).toLowerCase();
-  if (req === NF.toLowerCase()) fattori.requisiti_tecnici = 50; // ignoto = neutro
-  else if (req.includes("fatturato") && (req.includes("milion") || req.match(/\d{3}\.?\d{3}/))) fattori.requisiti_tecnici = 20;
-  else if (req.includes("certificazion") || req.includes("iso")) fattori.requisiti_tecnici = 40;
-  else if (req.includes("fatturato")) fattori.requisiti_tecnici = 45;
-  else fattori.requisiti_tecnici = 65;
+  if (req === NF.toLowerCase()) fattori.requisiti_tecnici = 70;
+  else if (req.includes("fatturato") && (req.includes("milion") || req.match(/\d{3}\.?\d{3}/))) fattori.requisiti_tecnici = 25;
+  else if (req.includes("certificazion") || req.includes("iso")) fattori.requisiti_tecnici = 45;
+  else fattori.requisiti_tecnici = 70;
 
   // 5. Complessità consegna
   const luogo = (dati.luogo_consegna || NF).toLowerCase();
@@ -1958,13 +1988,11 @@ function calcolaCriticita(dati) {
 
   // 7. Garanzia obbligatoria
   const gar = (dati.garanzia_minima_obbligatoria || NF).toLowerCase();
-  if (gar === NF.toLowerCase() || gar.includes("non specificat")) fattori.garanzia_obbligatoria = 50;
-  else if (gar.includes("non richiest") || gar.includes("non previst")) fattori.garanzia_obbligatoria = 85;
-  else if (gar.includes("12")) fattori.garanzia_obbligatoria = 70;
-  else if (gar.includes("24")) fattori.garanzia_obbligatoria = 55;
-  else if (gar.includes("36")) fattori.garanzia_obbligatoria = 40;
-  else if (gar.includes("48") || gar.includes("60")) fattori.garanzia_obbligatoria = 20;
-  else fattori.garanzia_obbligatoria = 50;
+  if (gar === NF.toLowerCase() || gar.includes("non")) fattori.garanzia_obbligatoria = 85;
+  else if (gar.includes("24") || gar.includes("12")) fattori.garanzia_obbligatoria = 70;
+  else if (gar.includes("36")) fattori.garanzia_obbligatoria = 50;
+  else if (gar.includes("48") || gar.includes("60")) fattori.garanzia_obbligatoria = 25;
+  else fattori.garanzia_obbligatoria = 55;
 
   // 8. Subappalto
   const sub = (dati.subappalto || dati.altri_servizi_richiesti || NF).toLowerCase();
@@ -1997,13 +2025,13 @@ function calcolaCopertura(dati) {
     : [];
 
   if (garaSottoCat.length === 0) {
-    // Fallback: senza sotto-categorie non possiamo valutare bene
-    return { score: 40, fattori: {
-      copertura_sotto_categorie: 40,
-      marchi_in_catalogo: 40,
-      profondita_catalogo: 40,
-      compatibilita_importo: 40,
-    }, note: "Sotto-categorie non disponibili — score stimato al ribasso" };
+    // Fallback su aree tematiche
+    return { score: 50, fattori: {
+      copertura_sotto_categorie: 50,
+      marchi_in_catalogo: 50,
+      profondita_catalogo: 50,
+      compatibilita_importo: 50,
+    }, note: "Sotto-categorie non disponibili — score stimato" };
   }
 
   // 1. Copertura sotto-categorie: quante delle richieste sono nel catalogo?
@@ -2015,43 +2043,31 @@ function calcolaCopertura(dati) {
   // 2. Marchi in catalogo (se il bando cita marchi e noi li abbiamo)
   const marche = dati.marche_specifiche || dati.categorie_prodotti || NOT_FOUND;
   if (marche === NOT_FOUND || !marche) {
-    fattori.marchi_in_catalogo = 50; // nessun dato = neutro
+    fattori.marchi_in_catalogo = 70; // nessun vincolo = positivo
   } else {
+    // Euristico: se ci sono marchi comuni nel nostro catalogo
     const marcheLower = marche.toLowerCase();
     const brandsNoti = ["hp","lenovo","apple","samsung","epson","canon","brother","acer","asus","dell",
                         "logitech","philips","viewsonic","jabra","lg","arredalab","c2 group"];
     const trovati = brandsNoti.filter(b => marcheLower.includes(b));
     const totMenzionati = marche.split(/[,;\/]/).filter(s => s.trim().length > 2).length || 1;
-    fattori.marchi_in_catalogo = Math.min(100, Math.round((trovati.length / Math.max(totMenzionati, trovati.length + 1)) * 100));
+    fattori.marchi_in_catalogo = Math.min(100, Math.round((trovati.length / totMenzionati) * 100));
   }
 
-  // 3. Profondità catalogo: penalizza sotto-categorie con pochi prodotti
+  // 3. Profondità catalogo: media prodotti per sotto-categoria coperta
   if (coperte.length > 0) {
-    const scores = coperte.map(sc => {
+    const mediaProdotti = coperte.reduce((sum, sc) => {
       const key = catalogoKeys.find(k => k.toLowerCase() === sc.toLowerCase());
-      const n = key ? catalogo[key] : 0;
-      // <20 prodotti = scarso, 20-100 = discreto, 100-500 = buono, >500 = ottimo
-      if (n >= 500) return 90;
-      if (n >= 100) return 70;
-      if (n >= 20) return 50;
-      return 20;
-    });
-    fattori.profondita_catalogo = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+      return sum + (key ? catalogo[key] : 0);
+    }, 0) / coperte.length;
+    // >200 prodotti medi = ottimo, <20 = scarso
+    fattori.profondita_catalogo = Math.min(100, Math.round(mediaProdotti / 2));
   } else {
     fattori.profondita_catalogo = 10;
   }
 
-  // 4. Compatibilità importo — gare molto grandi sono più rischiose
-  const importoGara = estraiImporto(dati.valore_appalto);
-  if (!importoGara) {
-    fattori.compatibilita_importo = 50;
-  } else if (importoGara <= 200000) {
-    fattori.compatibilita_importo = 85;
-  } else if (importoGara <= 500000) {
-    fattori.compatibilita_importo = 65;
-  } else {
-    fattori.compatibilita_importo = 40;
-  }
+  // 4. Compatibilità importo (euristico su range prezzi)
+  fattori.compatibilita_importo = 70; // default neutro-positivo
 
   // Media pesata
   let somma = 0, pesoTot = 0;
@@ -2162,36 +2178,13 @@ function renderScoreSection(dati) {
           ${noteHtml}
         </div>
       </div>
-      <button class="score-legenda-toggle" onclick="this.nextElementSibling.classList.toggle('hidden'); this.textContent = this.nextElementSibling.classList.contains('hidden') ? 'Come viene calcolato lo score ▸' : 'Nascondi legenda ▾'">Come viene calcolato lo score ▸</button>
-      <div class="score-legenda-body hidden">
-        <p>Lo score di fattibilità valuta quanto una gara è adatta a C2 Group su una scala da <strong>A</strong> (molto adatta) a <strong>E</strong> (non adatta). Il punteggio finale (0-100) nasce dalla media pesata di due dimensioni.</p>
-        <h4>1. Criticità operative (${conf.peso_criticita}%)</h4>
-        <p>Valuta i rischi e gli oneri della partecipazione: <strong>Criterio di aggiudicazione</strong> (OEPV favorevole, minor prezzo sfavorevole), <strong>Penali</strong> (gravose o senza tetto penalizzano), <strong>Tempi di consegna</strong> (sotto 30gg penalizza), <strong>Requisiti tecnici</strong> (fatturato elevato o certificazioni rare penalizzano), <strong>Complessità consegna</strong> (più plessi = più rischio logistico), <strong>Costi di partecipazione</strong> (cauzione + ANAC + bollo), <strong>Garanzia obbligatoria</strong> (oltre 36 mesi penalizza), <strong>Subappalto</strong> (non ammesso = meno flessibilità).</p>
-        <h4>2. Copertura prodotti (${conf.peso_copertura}%)</h4>
-        <p>Valuta quanto il catalogo C2 Group copre ciò che la gara richiede: <strong>Copertura sotto-categorie</strong> (% delle sotto-categorie merceologiche presenti nel catalogo), <strong>Profondità catalogo</strong> (ampiezza gamma per sotto-categoria), <strong>Marchi in catalogo</strong> (marchi specifici richiesti), <strong>Compatibilità importo</strong> (gare molto grandi = maggiore esposizione).</p>
-        <h4>Fasce di valutazione</h4>
-        <div class="score-fasce">
-          <span class="score-fascia-tag"><span class="score-fascia-dot" style="background:#2E7D32"></span>A (80-100) Molto adatta</span>
-          <span class="score-fascia-tag"><span class="score-fascia-dot" style="background:#558B2F"></span>B (60-79) Buona opportunità</span>
-          <span class="score-fascia-tag"><span class="score-fascia-dot" style="background:#F57F17"></span>C (40-59) Valutare</span>
-          <span class="score-fascia-tag"><span class="score-fascia-dot" style="background:#E65100"></span>D (20-39) Sconsigliata</span>
-          <span class="score-fascia-tag"><span class="score-fascia-dot" style="background:#C62828"></span>E (0-19) Non adatta</span>
-        </div>
-        <p style="margin-top:12px; font-style:italic; color:var(--gray); font-size:11px;">I pesi dei singoli fattori sono configurabili dal bottone "Configura pesi". Lo score è indicativo e non sostituisce la valutazione commerciale.</p>
-      </div>
     </div>`;
 }
 
 /* ── Badge score per le card overview ── */
 function renderScoreBadge(dati, small) {
   const sc = calcolaScore(dati);
-  if (small) {
-    return `<div style="display:flex; align-items:center; gap:6px; flex-shrink:0;" title="${sc.fascia.label}">
-      <div class="score-badge score-badge-sm" style="background:${sc.fascia.colore}">${sc.lettera}</div>
-      <span style="font-size:10px; font-weight:600; color:${sc.fascia.colore};">Fattibilità</span>
-    </div>`;
-  }
-  const cls = "score-badge";
+  const cls = small ? "score-badge score-badge-sm" : "score-badge";
   return `<div class="${cls}" style="background:${sc.fascia.colore}" title="Score: ${sc.finale}/100 — ${sc.fascia.label}">${sc.lettera}</div>`;
 }
 
@@ -2240,15 +2233,15 @@ function mostraPesiModal() {
       <p>Modifica i pesi di ciascun fattore. I punteggi di tutte le gare verranno ricalcolati automaticamente.</p>
       <div class="pesi-row">
         <label><strong>Peso Criticità Operative</strong></label>
-        <input type="range" min="0" max="100" value="${conf.peso_criticita}" id="slider-criticita"
-               oninput="this.nextElementSibling.textContent=this.value; document.getElementById('slider-copertura').value=100-this.value; document.getElementById('val-copertura').textContent=100-parseInt(this.value);" data-key="peso_criticita">
-        <div class="pesi-val" id="val-criticita">${conf.peso_criticita}</div>
+        <input type="range" min="0" max="100" value="${conf.peso_criticita}"
+               oninput="this.nextElementSibling.textContent=this.value" data-key="peso_criticita">
+        <div class="pesi-val">${conf.peso_criticita}</div>
       </div>
       <div class="pesi-row">
         <label><strong>Peso Copertura Prodotti</strong></label>
-        <input type="range" min="0" max="100" value="${conf.peso_copertura}" id="slider-copertura"
-               oninput="this.nextElementSibling.textContent=this.value; document.getElementById('slider-criticita').value=100-this.value; document.getElementById('val-criticita').textContent=100-parseInt(this.value);" data-key="peso_copertura">
-        <div class="pesi-val" id="val-copertura">${conf.peso_copertura}</div>
+        <input type="range" min="0" max="100" value="${conf.peso_copertura}"
+               oninput="this.nextElementSibling.textContent=this.value" data-key="peso_copertura">
+        <div class="pesi-val">${conf.peso_copertura}</div>
       </div>
       <div class="pesi-group-title">Fattori Criticità</div>
       ${renderSliders(critKeys, "fattori_criticita", critDesc)}
