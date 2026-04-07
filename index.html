@@ -444,6 +444,75 @@
   }
   .btn-download:hover { background: var(--blue-mid); color: var(--white); }
 
+  .btn-approfondimento {
+    color: var(--white);
+    background: var(--accent);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: Arial, sans-serif;
+    cursor: pointer;
+    transition: all .2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .btn-approfondimento:hover { background: #D94A2E; }
+
+  .approfondimento-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .approfondimento-title {
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--blue-dark);
+  }
+  .approfondimento-meta {
+    font-size: 12px;
+    color: var(--gray);
+    margin-top: 4px;
+  }
+  .approfondimento-body {
+    padding: 20px 24px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #333;
+  }
+  .approfondimento-body h3.appr-h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--blue-dark);
+    margin: 20px 0 8px 0;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--accent);
+  }
+  .approfondimento-body h4.appr-h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--blue-mid);
+    margin: 14px 0 6px 0;
+  }
+  .approfondimento-body ul {
+    margin: 6px 0;
+    padding-left: 20px;
+  }
+  .approfondimento-body li {
+    margin-bottom: 4px;
+  }
+  .approfondimento-body strong {
+    color: var(--blue-dark);
+  }
+  #approfondimento-result {
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
   .section-card {
     background: var(--white);
     border-radius: 12px;
@@ -1176,6 +1245,30 @@ const APP_PASSWORD = "AnalisiBandi";
 const CLAUDE_MODEL = "claude-sonnet-4-5";
 const CHUNK_SIZE = 35000;
 const NOT_FOUND = "Non specificato nel documento";
+const MAX_PRODOTTI_PER_CATEGORIA = 30;
+
+let indiceProdottiCache = null;
+
+const PROMPT_APPROFONDIMENTO = `Sei un consulente commerciale esperto di C2 Group (www.c2group.it), azienda che fornisce tecnologia, arredi e materiale didattico alle scuole italiane.
+
+Ti vengono forniti:
+1. I DATI DELLA GARA: informazioni estratte dal disciplinare/capitolato
+2. I PRODOTTI DEL CATALOGO C2: lista di prodotti disponibili, filtrati per le sotto-categorie pertinenti alla gara
+
+Il tuo compito è analizzare la gara e suggerire i prodotti C2 più adatti, organizzati per sotto-categoria.
+
+Per ogni sotto-categoria pertinente:
+- Indica 3-5 prodotti consigliati con motivazione breve
+- Segnala se ci sono requisiti specifici (marche, certificazioni, specifiche tecniche) che limitano la scelta
+- Evidenzia eventuali gap: requisiti della gara che il catalogo C2 non copre
+
+Alla fine aggiungi una sezione "Riepilogo strategico" con:
+- Punti di forza dell'offerta C2 per questa gara
+- Criticità o gap da colmare
+- Suggerimenti operativi per la partecipazione
+
+Rispondi in formato strutturato con titoli markdown (## per sotto-categorie, ### per sezioni).
+Sii concreto e pratico, evita generalità.`;
 
 const SYSTEM_PROMPT = `Sei un esperto analista di appalti pubblici italiani.
 Analizza i documenti di gara forniti (possono includere Disciplinare, Capitolato Tecnico, Allegati tecnici) ed estrai esattamente i seguenti 30 campi in formato JSON.
@@ -1507,6 +1600,159 @@ function unisciRisultati(lista) {
     if (!risultato[key]) risultato[key] = NOT_FOUND;
   }
   return risultato;
+}
+
+// ═══════════════════════════════════════════════════
+//  APPROFONDIMENTO PRODOTTI CON CLAUDE
+// ═══════════════════════════════════════════════════
+async function caricaIndiceProdotti() {
+  if (indiceProdottiCache) return indiceProdottiCache;
+  const resp = await fetch("data/indice_prodotti.json");
+  if (!resp.ok) throw new Error("Impossibile caricare l'indice prodotti");
+  indiceProdottiCache = await resp.json();
+  return indiceProdottiCache;
+}
+
+function filtraProdottiPerGara(indice, dati) {
+  const sottoCategorie = (dati.sotto_categorie_merceologiche || "")
+    .split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+  if (!sottoCategorie.length) return { filtrati: [], perCategoria: {} };
+
+  const perCategoria = {};
+  for (const p of indice.prodotti) {
+    const sc = (p.sc || "").toLowerCase();
+    if (sottoCategorie.some(s => sc.includes(s) || s.includes(sc))) {
+      const catKey = p.sc || "Altro";
+      if (!perCategoria[catKey]) perCategoria[catKey] = [];
+      perCategoria[catKey].push(p);
+    }
+  }
+
+  // Max N prodotti per categoria (ordinati per prezzo crescente per varietà)
+  const filtrati = [];
+  for (const [cat, prods] of Object.entries(perCategoria)) {
+    prods.sort((a, b) => a.p - b.p);
+    const selezionati = prods.slice(0, MAX_PRODOTTI_PER_CATEGORIA);
+    perCategoria[cat] = selezionati;
+    filtrati.push(...selezionati);
+  }
+  return { filtrati, perCategoria };
+}
+
+function costruisciTestoProdotti(perCategoria, baseUrl) {
+  let testo = "";
+  for (const [cat, prods] of Object.entries(perCategoria)) {
+    testo += `\n## ${cat} (${prods.length} prodotti)\n`;
+    for (const p of prods) {
+      testo += `- ${p.t} | ${p.b} | ${p.p} EUR | ${baseUrl}${p.l}\n`;
+    }
+  }
+  return testo;
+}
+
+function costruisciRiepilogoGara(dati) {
+  const campiRilevanti = [
+    "oggetto_gara", "valore_appalto", "numero_lotti", "importo_per_lotto",
+    "criterio_aggiudicazione", "categorie_prodotti", "marche_specifiche",
+    "certificazioni", "installazione_beni", "sotto_categorie_merceologiche",
+    "aree_tematiche"
+  ];
+  let riepilogo = "";
+  for (const key of campiRilevanti) {
+    const val = dati[key];
+    if (val && val !== NOT_FOUND) {
+      riepilogo += `${key}: ${val}\n`;
+    }
+  }
+  return riepilogo;
+}
+
+async function avviaApprofondimento(garaIdx) {
+  const gara = archivioData.gare[garaIdx];
+  const dati = archivioCache[gara.id];
+  if (!dati) return;
+
+  const container = document.getElementById("approfondimento-result");
+  container.innerHTML = `
+    <div class="processing-card" style="margin-top:0;">
+      <div class="spinner"></div>
+      <div class="processing-title">Analisi prodotti in corso...</div>
+      <div class="processing-sub">Caricamento catalogo e invio a Claude AI. Attendere 20-50 secondi.</div>
+    </div>`;
+  container.style.display = "block";
+
+  try {
+    // 1. Carica indice prodotti
+    const indice = await caricaIndiceProdotti();
+
+    // 2. Filtra per sotto-categorie della gara
+    const { filtrati, perCategoria } = filtraProdottiPerGara(indice, dati);
+
+    if (!filtrati.length) {
+      container.innerHTML = `<div class="alert-error">Nessun prodotto trovato nel catalogo C2 per le sotto-categorie di questa gara.
+        <br>Sotto-categorie gara: ${escHtml(dati.sotto_categorie_merceologiche || "nessuna")}</div>`;
+      return;
+    }
+
+    // 3. Costruisci prompt
+    const testoProdotti = costruisciTestoProdotti(perCategoria, indice.base_url);
+    const riepilogoGara = costruisciRiepilogoGara(dati);
+    const numProdotti = filtrati.length;
+    const numCategorie = Object.keys(perCategoria).length;
+
+    const userMessage = `DATI DELLA GARA:\n${riepilogoGara}\n\nPRODOTTI CATALOGO C2 (${numProdotti} prodotti in ${numCategorie} sotto-categorie):\n${testoProdotti}`;
+
+    // 4. Chiama Claude
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": state.apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: 4096,
+        system: PROMPT_APPROFONDIMENTO,
+        messages: [{ role: "user", content: userMessage }],
+      }),
+    });
+
+    if (!response.ok) {
+      const errBody = await response.text();
+      throw new Error("Errore API Claude (" + response.status + "): " + errBody);
+    }
+
+    const result = await response.json();
+    const risposta = result.content[0].text.trim();
+
+    // 5. Renderizza risultato (markdown semplice → HTML)
+    const htmlRisposta = markdownSemplice(risposta);
+
+    container.innerHTML = `
+      <div class="approfondimento-header">
+        <div class="approfondimento-title">Analisi Prodotti Dettagliata</div>
+        <div class="approfondimento-meta">${numProdotti} prodotti analizzati in ${numCategorie} sotto-categorie</div>
+      </div>
+      <div class="approfondimento-body">${htmlRisposta}</div>`;
+
+  } catch (e) {
+    container.innerHTML = `<div class="alert-error">Errore durante l'approfondimento: ${escHtml(e.message)}</div>`;
+  }
+}
+
+function markdownSemplice(md) {
+  return md
+    .replace(/^### (.+)$/gm, '<h4 class="appr-h4">$1</h4>')
+    .replace(/^## (.+)$/gm, '<h3 class="appr-h3">$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n- /g, '\n<li>')
+    .replace(/(<li>.*?)(?=\n<li>|\n<h|$)/gs, '$1</li>')
+    .replace(/(<li>[\s\S]*?<\/li>)/g, '<ul>$1</ul>')
+    .replace(/<\/ul>\s*<ul>/g, '')
+    .replace(/\n{2,}/g, '<br><br>')
+    .replace(/\n/g, '<br>');
 }
 
 // ═══════════════════════════════════════════════════
@@ -2876,9 +3122,13 @@ async function mostraDettaglioArchivio(idx) {
           ${areeTags} ${locTag}
         </div>
       </div>
-      <button class="btn-download" onclick="mostraArchivioOverview()">Torna all'archivio</button>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <button class="btn-approfondimento" onclick="avviaApprofondimento(${idx})">Analisi Prodotti Dettagliata</button>
+        <button class="btn-download" onclick="mostraArchivioOverview()">Torna all'archivio</button>
+      </div>
     </div>
     ${scoreHtml}
+    <div id="approfondimento-result" style="display:none;"></div>
     ${sezioniHtml}`;
 }
 
