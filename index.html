@@ -1673,9 +1673,17 @@ function costruisciRiepilogoGara(dati) {
 async function avviaApprofondimento(garaIdx) {
   const gara = archivioData.gare[garaIdx];
   const dati = archivioCache[gara.id];
-  if (!dati) return;
 
   const container = document.getElementById("approfondimento-result");
+  if (!container) { alert("Errore: container approfondimento non trovato"); return; }
+
+  if (!dati) {
+    container.style.display = "block";
+    container.innerHTML = `<div class="alert-error">Dati della gara non disponibili. Ricarica la pagina e riprova.</div>`;
+    container.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+
   container.innerHTML = `
     <div class="processing-card" style="margin-top:0;">
       <div class="spinner"></div>
@@ -1683,6 +1691,7 @@ async function avviaApprofondimento(garaIdx) {
       <div class="processing-sub">Caricamento catalogo e invio a Claude AI. Attendere 20-50 secondi.</div>
     </div>`;
   container.style.display = "block";
+  container.scrollIntoView({ behavior: "smooth", block: "start" });
 
   try {
     // 1. Carica indice prodotti
