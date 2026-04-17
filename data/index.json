@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260417_Disciplinare-Gara_Istituto-Omnicomprensivo-di-Remedello",
+      "nome_ente": "Istituto Omnicomprensivo di Remedello-Bonsignori",
+      "data_elaborazione": "2026-04-17",
+      "valore_appalto": "€ 142.019,85 IVA esclusa - Dettaglio: Materiale informatico € 47.150,00; Materiale informatico € 84.100,00; Materiale vario € 4.589,85; Arredi € 6.180,00. CIG indicato nel lotto della RDO",
+      "scadenza_procedura": "03 maggio 2026 ore 20:00",
+      "aree_tematiche": "Tecnologia, Arredi",
+      "campi_compilati": 25,
+      "file": "20260417_Disciplinare-Gara_Istituto-Omnicomprensivo-di-Remedello.json"
+    },
+    {
       "id": "20260203_Disciplinare-Gara_IISS-NBERGESE",
       "nome_ente": "IISS N.BERGESE - C.M.: GEIS02300E - C.F.: 95245910104",
       "data_elaborazione": "2026-04-07",
@@ -101,5 +111,5 @@
       "file": "20260318_Disciplinare-Gara_IIS-L-CEREBOTANI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-04-07T17:22:35.560723"
+  "ultimo_aggiornamento": "2026-04-17T17:20:53.697026"
 }
