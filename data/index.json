@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260414_Disciplinare-Gara_ISTPROFINDUSTRIA-E-ARTIGIANATO-A-PARMA",
+      "nome_ente": "IST.PROF.INDUSTRIA E ARTIGIANATO A. PARMA - C.M. VARI04000E - C.F. 85001640128",
+      "data_elaborazione": "2026-04-21",
+      "valore_appalto": "Importo complessivo: Euro 149.925,00 oltre IVA. Dettaglio per lotto: Lotto 1: € 76.700,00 oltre IVA; Lotto 2: € 46.975,00 oltre IVA; Lotto 3: € 16.365,50 oltre IVA; Lotto 4: € 5.500,00 oltre IVA; Lotto 5: € 2.737,00 oltre IVA; Lotto 6: € 1.647,50 oltre IVA",
+      "scadenza_procedura": "Ore 12:00 del 18/05/2026",
+      "aree_tematiche": "Tecnologia",
+      "campi_compilati": 26,
+      "file": "20260414_Disciplinare-Gara_ISTPROFINDUSTRIA-E-ARTIGIANATO-A-PARMA.json"
+    },
+    {
       "id": "20260417_Disciplinare-Gara_Istituto-Omnicomprensivo-di-Remedello",
       "nome_ente": "Istituto Omnicomprensivo di Remedello-Bonsignori",
       "data_elaborazione": "2026-04-17",
@@ -111,5 +121,5 @@
       "file": "20260318_Disciplinare-Gara_IIS-L-CEREBOTANI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-04-17T17:20:53.697026"
+  "ultimo_aggiornamento": "2026-04-21T11:19:16.283656"
 }
