@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260424_Disciplinare-Gara_ISTITUTO-STATALE-ISTRUZIONE-SECONDARIA-SUPERIORE-F",
+      "nome_ente": "ISTITUTO STATALE ISTRUZIONE SECONDARIA SUPERIORE 'Francesco Da Collo' - C.F. 91003290268",
+      "data_elaborazione": "2026-04-24",
+      "valore_appalto": "Laboratorio Pratica d'Albergo € 19.505,46; Laboratorio di Grafica Digitale Fotografia e Produzione Multimediale € 13.187,46; Laboratorio Marketing € 13.926,12; Laboratorio Museale € 10.953,54; Laboratorio ENAIP Conegliano € 12.643,80; Totale Area Arredi € 70.126,38; tutti importi IVA esclusa",
+      "scadenza_procedura": "Disponibile sulla piattaforma di gara",
+      "aree_tematiche": "Tecnologia, Arredi",
+      "campi_compilati": 30,
+      "file": "20260424_Disciplinare-Gara_ISTITUTO-STATALE-ISTRUZIONE-SECONDARIA-SUPERIORE-F.json"
+    },
+    {
       "id": "20260414_Disciplinare-Gara_ISTITUTO-STATALE-ISTRUZIONE-SECONDARIA-SUPERIORE-F",
       "nome_ente": "ISTITUTO STATALE ISTRUZIONE SECONDARIA SUPERIORE Francesco Da Collo",
       "data_elaborazione": "2026-04-24",
@@ -131,5 +141,5 @@
       "file": "20260318_Disciplinare-Gara_IIS-L-CEREBOTANI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-04-24T17:03:39.448791"
+  "ultimo_aggiornamento": "2026-04-24T17:18:24.593020"
 }
