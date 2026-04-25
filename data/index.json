@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260425_Disciplinare-Gara_ISTITUTO-STATALE-ISTRUZIONE-SECONDARIA-SUPERIORE-F",
+      "nome_ente": "ISTITUTO STATALE ISTRUZIONE SECONDARIA SUPERIORE Francesco Da Collo - C.F. 91003290268",
+      "data_elaborazione": "2026-04-25",
+      "valore_appalto": "Valore totale stimato: €522.600,00 IVA esclusa. LOTTO 1 (Area Tecnologica e Informatica): €452.383,62 IVA esclusa. LOTTO 2 (Area Arredi): €70.216,38 IVA esclusa. CIG: non specificato nel documento",
+      "scadenza_procedura": "30/04/2026 ore 13:00",
+      "aree_tematiche": "Tecnologia, Arredi",
+      "campi_compilati": 31,
+      "file": "20260425_Disciplinare-Gara_ISTITUTO-STATALE-ISTRUZIONE-SECONDARIA-SUPERIORE-F.json"
+    },
+    {
       "id": "20260414_Disciplinare-Gara_ISTPROFINDUSTRIA-E-ARTIGIANATO-A-PARMA",
       "nome_ente": "IST.PROF.INDUSTRIA E ARTIGIANATO A. PARMA - C.M. VARI04000E - C.F. 85001640128",
       "data_elaborazione": "2026-04-21",
@@ -121,5 +131,5 @@
       "file": "20260318_Disciplinare-Gara_IIS-L-CEREBOTANI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-04-24T18:08:32.293235"
+  "ultimo_aggiornamento": "2026-04-25T16:05:59.968385"
 }
