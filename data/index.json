@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260525_Disciplinare-Gara_IIS-Marconi",
+      "nome_ente": "IIS Marconi-Mangano di Catania - ITI G. Marconi Cod. Mecc. CTTF04301X e IPSS L. Mangano Cod. Mecc. CTRF043014",
+      "data_elaborazione": "2026-05-25",
+      "valore_appalto": "Lotto a1 Laboratorio di Analisi e Produzione Chimica Avanzata: €114.754,10 (di cui costo manodopera stimato €4.248,85) CIG BB912D4096; Lotto a3 Laboratorio di automazione e controllo di processo: €84.934,30 CIG BB912D5169; Lotto a4 CED & AI Data Analytics Center: €140.432,79 CIG BB912D623C; Lotto a5 Digital Twin Lab: €89.896,00 CIG BB912D730F. Valore totale oggetto di gara: €430.017,19 IVA esclusa",
+      "scadenza_procedura": "Disponibile sulla piattaforma di gara",
+      "aree_tematiche": "Tecnologia, STEAM",
+      "campi_compilati": 28,
+      "file": "20260525_Disciplinare-Gara_IIS-Marconi.json"
+    },
+    {
       "id": "20260425_Disciplinare-Gara_ISTITUTO-STATALE-ISTRUZIONE-SECONDARIA-SUPERIORE-F",
       "nome_ente": "ISTITUTO STATALE ISTRUZIONE SECONDARIA SUPERIORE Francesco Da Collo - C.F. 91003290268",
       "data_elaborazione": "2026-04-25",
@@ -131,5 +141,5 @@
       "file": "20260318_Disciplinare-Gara_IIS-L-CEREBOTANI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-04-25T16:05:59.968385"
+  "ultimo_aggiornamento": "2026-05-25T13:15:20.481140"
 }
