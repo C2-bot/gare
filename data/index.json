@@ -1,14 +1,14 @@
 {
   "gare": [
     {
-      "id": "20260423_Disciplinare-Gara_Istituto-di-Istruzione-Superiore-Statale-P-Mazzone",
-      "nome_ente": "Istituto di Istruzione Superiore Statale \"P. Mazzone\" - Roccella Jonica (RC) - Codice meccanografico: RCIS03800B",
+      "id": "20260526_Disciplinare-Gara_Istituto-Istruzione-Superiore-Statale-Mazzone",
+      "nome_ente": "Istituto Istruzione Superiore Statale Mazzone - Roccella Jonica - Codice meccanografico: RCIS03800B",
       "data_elaborazione": "2026-05-26",
-      "valore_appalto": "Non specificato nel documento - CIG LOTTO 1: BBC2A7FEAB; CIG LOTTO 2: BBC2A80F7E; CIG LOTTO 3: BBC2A81056",
-      "scadenza_procedura": "29 maggio 2026 ore 10:00",
-      "aree_tematiche": "Tecnologia, Arredi, Altro",
-      "campi_compilati": 31,
-      "file": "20260423_Disciplinare-Gara_Istituto-di-Istruzione-Superiore-Statale-P-Mazzone.json"
+      "valore_appalto": "Non specificato nel documento",
+      "scadenza_procedura": "Non specificato nel documento",
+      "aree_tematiche": "Tecnologia, Formazione",
+      "campi_compilati": 12,
+      "file": "20260526_Disciplinare-Gara_Istituto-Istruzione-Superiore-Statale-Mazzone.json"
     },
     {
       "id": "20260526_Disciplinare-Gara_Istituto-di-Istruzione-Superiore-Statale-P-Mazzone",
@@ -191,5 +191,5 @@
       "file": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-05-26T10:09:33.826262"
+  "ultimo_aggiornamento": "2026-05-26T10:11:17.720143"
 }
