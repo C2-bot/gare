@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260522_Disciplinare-Gara_ISII-GUGLIELMO-MARCONI",
+      "nome_ente": "ISII GUGLIELMO MARCONI - Piacenza (PC) - Codice meccanografico: PCIS006006",
+      "data_elaborazione": "2026-05-26",
+      "valore_appalto": "CIG LOTTO 1: BBCAC02F0A; CIG LOTTO 2: BBCAC03FDD; CIG LOTTO 3: BBCAC040B5; CIG LOTTO 4: BBCAC05188; CIG LOTTO 5: BBCAC0625B; CIG LOTTO 6: BBCAC0732E; CIG LOTTO 7: BBCAC08401; CIG LOTTO 8: BBCAC094D4; CIG LOTTO 9: BBCAC0A5A7; CIG LOTTO 10: BBCAC0B67A; CIG LOTTO 11: BBCAC0C74D - Importi specifici per lotto non indicati nel documento",
+      "scadenza_procedura": "Entro e non oltre le ore 10:00 del giorno 09 giugno 2026",
+      "aree_tematiche": "Tecnologia, Arredi, Software, Formazione",
+      "campi_compilati": 30,
+      "file": "20260522_Disciplinare-Gara_ISII-GUGLIELMO-MARCONI.json"
+    },
+    {
       "id": "20260526_Disciplinare-Gara_Non-specificato-nel-documento",
       "nome_ente": "Non specificato nel documento",
       "data_elaborazione": "2026-05-26",
@@ -161,5 +171,5 @@
       "file": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-05-26T09:37:54.093333"
+  "ultimo_aggiornamento": "2026-05-26T09:54:08.177475"
 }
