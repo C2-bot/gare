@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260526_Disciplinare-Gara_IIS-L-CEREBOTANI",
+      "nome_ente": "IIS L. CEREBOTANI - Codice meccanografico: BSIS03300R",
+      "data_elaborazione": "2026-05-26",
+      "valore_appalto": "Importo contrattuale complessivo: €19.799,00 IVA esclusa. LOTTO 1 (CIG: BBB9B0DEB7 - CUI: F84001580178202600001): €14.999,00 IVA esclusa, costi sicurezza interferenze €0,00. LOTTO 2 (CIG: BBB9B0EF8A - CUI: F84001580178202600001): €4.800,00 IVA esclusa, costi sicurezza interferenze €0,00",
+      "scadenza_procedura": "Non specificato nel documento",
+      "aree_tematiche": "Tecnologia, Software",
+      "campi_compilati": 20,
+      "file": "20260526_Disciplinare-Gara_IIS-L-CEREBOTANI.json"
+    },
+    {
       "id": "20260525_Disciplinare-Gara_IPS-OLIVETTI-CALLEGARI",
       "nome_ente": "IPS OLIVETTI – CALLEGARI, Istituto Professionale Statale Olivetti Callegari, codice meccanografico non specificato nel documento",
       "data_elaborazione": "2026-05-25",
@@ -139,17 +149,7 @@
       "aree_tematiche": "Tecnologia, STEAM",
       "campi_compilati": 29,
       "file": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI.json"
-    },
-    {
-      "id": "20260318_Disciplinare-Gara_IIS-L-CEREBOTANI",
-      "nome_ente": "IIS L. CEREBOTANI - Codice meccanografico: BSIS03300R",
-      "data_elaborazione": "2026-04-03",
-      "valore_appalto": "Importo totale: € 390.207,44 IVA esclusa; LOTTO 1 - MetroPhisics Lab: € 66.677,45 IVA esclusa, CIG: BAE84EF410; LOTTO 2 - CyberData Lab: € 148.278,68 IVA esclusa, CIG: BAE84F04E3; LOTTO 3 - ProtoDesign Lab: € 96.562,79 IVA esclusa, CIG: BAE84F15B6; LOTTO 4 - DigiFactory Lab: € 78.688,52 IVA esclusa, CIG: BAE84F2689",
-      "scadenza_procedura": "Disponibile sulla piattaforma di gara",
-      "aree_tematiche": "Tecnologia",
-      "campi_compilati": 30,
-      "file": "20260318_Disciplinare-Gara_IIS-L-CEREBOTANI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-05-25T16:39:47.202215"
+  "ultimo_aggiornamento": "2026-05-26T09:35:02.043915"
 }
