@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260526_Disciplinare-Gara_Non-specificato-nel-documento",
+      "nome_ente": "Non specificato nel documento",
+      "data_elaborazione": "2026-05-26",
+      "valore_appalto": "Non specificato nel documento",
+      "scadenza_procedura": "Non specificato nel documento",
+      "aree_tematiche": "Tecnologia",
+      "campi_compilati": 8,
+      "file": "20260526_Disciplinare-Gara_Non-specificato-nel-documento.json"
+    },
+    {
       "id": "20260526_Disciplinare-Gara_IIS-Mazzone",
       "nome_ente": "IIS Mazzone - Istituto Istruzione Superiore Statale Mazzone - Roccella Jonica (RC) - Codice meccanografico: RCIS03800B",
       "data_elaborazione": "2026-05-26",
@@ -29,16 +39,6 @@
       "aree_tematiche": "Tecnologia, Arredi, Software, Formazione",
       "campi_compilati": 30,
       "file": "20260522_Disciplinare-Gara_ISII-GUGLIELMO-MARCONI.json"
-    },
-    {
-      "id": "20260526_Disciplinare-Gara_Non-specificato-nel-documento",
-      "nome_ente": "Non specificato nel documento",
-      "data_elaborazione": "2026-05-26",
-      "valore_appalto": "Non specificato nel documento",
-      "scadenza_procedura": "Disponibile sulla piattaforma di gara",
-      "aree_tematiche": "Non specificato nel documento",
-      "campi_compilati": 4,
-      "file": "20260526_Disciplinare-Gara_Non-specificato-nel-documento.json"
     },
     {
       "id": "20260526_Disciplinare-Gara_IIS-L-CEREBOTANI",
@@ -191,5 +191,5 @@
       "file": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-05-26T10:12:57.394159"
+  "ultimo_aggiornamento": "2026-05-26T10:16:03.979503"
 }
