@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260526_Disciplinare-Gara_Non-specificato-nel-documento",
+      "nome_ente": "Non specificato nel documento",
+      "data_elaborazione": "2026-05-26",
+      "valore_appalto": "Non specificato nel documento",
+      "scadenza_procedura": "Disponibile sulla piattaforma di gara",
+      "aree_tematiche": "Non specificato nel documento",
+      "campi_compilati": 4,
+      "file": "20260526_Disciplinare-Gara_Non-specificato-nel-documento.json"
+    },
+    {
       "id": "20260526_Disciplinare-Gara_IIS-L-CEREBOTANI",
       "nome_ente": "IIS L. CEREBOTANI - Codice meccanografico: BSIS03300R",
       "data_elaborazione": "2026-05-26",
@@ -151,5 +161,5 @@
       "file": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-05-26T09:35:02.043915"
+  "ultimo_aggiornamento": "2026-05-26T09:37:54.093333"
 }
