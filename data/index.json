@@ -2,12 +2,12 @@
   "gare": [
     {
       "id": "20260526_Disciplinare-Gara_Istituto-di-Istruzione-Superiore-Statale-P-Mazzone",
-      "nome_ente": "Istituto di Istruzione Superiore Statale 'P. Mazzone' - Roccella Jonica (RC) - Codice meccanografico non specificato",
+      "nome_ente": "Istituto di Istruzione Superiore Statale P. Mazzone - Roccella Jonica (RC) - Codice meccanografico: rcis03800b",
       "data_elaborazione": "2026-05-26",
-      "valore_appalto": "Importo complessivo: € 192.905,58 (IVA esclusa). Lotto 1 - Forniture e Servizi IT: € 137.477,87 stimato; Lotto 2 - Arredi e Complementi: € 36.102,46 stimato; Lotto 3 - Lavori Edili e Impiantistici: € 19.325,25 stimato. CIG: non specificati nel documento",
-      "scadenza_procedura": "Non specificato nel documento",
-      "aree_tematiche": "Tecnologia, Arredi, STEAM",
-      "campi_compilati": 26,
+      "valore_appalto": "Non specificato nel documento",
+      "scadenza_procedura": "29 maggio 2026 ore 10:00:00",
+      "aree_tematiche": "Tecnologia, Arredi, Altro",
+      "campi_compilati": 16,
       "file": "20260526_Disciplinare-Gara_Istituto-di-Istruzione-Superiore-Statale-P-Mazzone.json"
     },
     {
@@ -19,16 +19,6 @@
       "aree_tematiche": "Tecnologia",
       "campi_compilati": 8,
       "file": "20260526_Disciplinare-Gara_Non-specificato-nel-documento.json"
-    },
-    {
-      "id": "20260526_Disciplinare-Gara_IIS-Mazzone",
-      "nome_ente": "IIS Mazzone - Istituto Istruzione Superiore Statale Mazzone - Roccella Jonica (RC) - Codice meccanografico: RCIS03800B",
-      "data_elaborazione": "2026-05-26",
-      "valore_appalto": "Non specificato nel documento",
-      "scadenza_procedura": "Non specificato nel documento",
-      "aree_tematiche": "Arredi, Tecnologia",
-      "campi_compilati": 10,
-      "file": "20260526_Disciplinare-Gara_IIS-Mazzone.json"
     },
     {
       "id": "20260522_Disciplinare-Gara_ISII-GUGLIELMO-MARCONI",
@@ -191,5 +181,5 @@
       "file": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-05-26T10:24:35.723640"
+  "ultimo_aggiornamento": "2026-05-26T10:26:12.371565"
 }
