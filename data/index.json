@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260526_Disciplinare-Gara_Istituto-di-Istruzione-Superiore-Statale-P-Mazzone",
+      "nome_ente": "Istituto di Istruzione Superiore Statale 'P. Mazzone' - Roccella Jonica (RC)",
+      "data_elaborazione": "2026-05-26",
+      "valore_appalto": "€ 235.344,81",
+      "scadenza_procedura": "Non specificato nel documento",
+      "aree_tematiche": "Tecnologia, Software, Formazione, STEAM",
+      "campi_compilati": 14,
+      "file": "20260526_Disciplinare-Gara_Istituto-di-Istruzione-Superiore-Statale-P-Mazzone.json"
+    },
+    {
       "id": "20260522_Disciplinare-Gara_ISII-GUGLIELMO-MARCONI",
       "nome_ente": "ISII GUGLIELMO MARCONI - Piacenza (PC) - Codice meccanografico: PCIS006006",
       "data_elaborazione": "2026-05-26",
@@ -171,5 +181,5 @@
       "file": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-05-26T09:54:08.177475"
+  "ultimo_aggiornamento": "2026-05-26T09:58:15.150154"
 }
