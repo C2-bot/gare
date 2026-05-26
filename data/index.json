@@ -2,11 +2,11 @@
   "gare": [
     {
       "id": "20260526_Disciplinare-Gara_Istituto-di-Istruzione-Superiore-Statale-P-Mazzone",
-      "nome_ente": "Istituto di Istruzione Superiore Statale P. Mazzone - Roccella Jonica (RC) - Codice meccanografico: Non specificato nel documento",
+      "nome_ente": "Istituto di Istruzione Superiore Statale 'P. Mazzone' - Roccella Jonica (RC) - Codice meccanografico non specificato",
       "data_elaborazione": "2026-05-26",
-      "valore_appalto": "Importo complessivo: € 192.905,58 (IVA esclusa) - Lotto 1 Forniture e Servizi IT: € 137.477,87 stimato; Lotto 2 Arredi e Complementi: € 36.102,46 stimato; Lotto 3 Lavori Edili e Impiantistici: € 19.325,25 stimato. CIG: Non specificato nel documento",
+      "valore_appalto": "Importo complessivo: € 192.905,58 (IVA esclusa). Lotto 1 - Forniture e Servizi IT: € 137.477,87 stimato; Lotto 2 - Arredi e Complementi: € 36.102,46 stimato; Lotto 3 - Lavori Edili e Impiantistici: € 19.325,25 stimato. CIG: non specificati nel documento",
       "scadenza_procedura": "Non specificato nel documento",
-      "aree_tematiche": "Tecnologia, Arredi, Software, Formazione, STEAM",
+      "aree_tematiche": "Tecnologia, Arredi, STEAM",
       "campi_compilati": 26,
       "file": "20260526_Disciplinare-Gara_Istituto-di-Istruzione-Superiore-Statale-P-Mazzone.json"
     },
@@ -191,5 +191,5 @@
       "file": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-05-26T10:20:12.500839"
+  "ultimo_aggiornamento": "2026-05-26T10:24:35.723640"
 }
