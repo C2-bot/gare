@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260604_Disciplinare-Gara_Istituto-Statale-di-Istruzione-Superiore-G-Oberdan",
+      "nome_ente": "Istituto Statale di Istruzione Superiore G. Oberdan - Codice meccanografico: Non specificato nel documento",
+      "data_elaborazione": "2026-06-05",
+      "valore_appalto": "Importo complessivo IVA inclusa: euro 190.824,74; LOTTO 1 - FORNITURE (Arredi, attrezzature, dotazioni didattiche e addestramento): euro 180.774,74; LOTTO 2 – PICCOLI ADATTAMENTI EDILIZI: euro 10.050,00. CIG disponibili nella RDO MePA",
+      "scadenza_procedura": "17 giugno 2026 alle ore 18.00",
+      "aree_tematiche": "Tecnologia, Arredi, Altro",
+      "campi_compilati": 26,
+      "file": "20260604_Disciplinare-Gara_Istituto-Statale-di-Istruzione-Superiore-G-Oberdan.json"
+    },
+    {
       "id": "20260526_Disciplinare-Gara_Istituto-di-Istruzione-Superiore-Statale-P-Mazzone",
       "nome_ente": "Istituto di Istruzione Superiore Statale P. Mazzone - Roccella Jonica (RC) - Codice meccanografico: rcis03800b",
       "data_elaborazione": "2026-05-26",
@@ -181,5 +191,5 @@
       "file": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-05-26T10:26:12.371565"
+  "ultimo_aggiornamento": "2026-06-05T10:48:31.409409"
 }
