@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260617_Disciplinare-Gara_Non-specificato-nel-documento",
+      "nome_ente": "Non specificato nel documento",
+      "data_elaborazione": "2026-06-17",
+      "valore_appalto": "Non specificato nel documento",
+      "scadenza_procedura": "Non specificato nel documento",
+      "aree_tematiche": "Tecnologia",
+      "campi_compilati": 5,
+      "file": "20260617_Disciplinare-Gara_Non-specificato-nel-documento.json"
+    },
+    {
       "id": "20260604_Disciplinare-Gara_Istituto-Statale-di-Istruzione-Superiore-G-Oberdan",
       "nome_ente": "Istituto Statale di Istruzione Superiore G. Oberdan - Codice meccanografico: Non specificato nel documento",
       "data_elaborazione": "2026-06-05",
@@ -191,5 +201,5 @@
       "file": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-06-05T10:48:31.409409"
+  "ultimo_aggiornamento": "2026-06-17T16:01:01.704356"
 }
