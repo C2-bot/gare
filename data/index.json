@@ -1,6 +1,16 @@
 {
   "gare": [
     {
+      "id": "20260605_Disciplinare-Gara_Istituto-Zenale-Butinone",
+      "nome_ente": "Istituto Zenale Butinone - Codice meccanografico: BGIS033008",
+      "data_elaborazione": "2026-06-18",
+      "valore_appalto": "Valore totale stimato: €151.483,61 (imponibile IVA); Lotto 1: €144.959,02 (imponibile IVA) - €171.600,00 (IVA compresa); Lotto 2: €6.524,59 (imponibile IVA) - €7.960,00 (IVA compresa)",
+      "scadenza_procedura": "22/06/2026 ore 18:00",
+      "aree_tematiche": "Tecnologia",
+      "campi_compilati": 23,
+      "file": "20260605_Disciplinare-Gara_Istituto-Zenale-Butinone.json"
+    },
+    {
       "id": "20260617_Disciplinare-Gara_Non-specificato-nel-documento",
       "nome_ente": "Non specificato nel documento",
       "data_elaborazione": "2026-06-17",
@@ -201,5 +211,5 @@
       "file": "20260224_Disciplinare-Gara_IPSIA-LB-ALBERTI.json"
     }
   ],
-  "ultimo_aggiornamento": "2026-06-17T16:01:01.704356"
+  "ultimo_aggiornamento": "2026-06-18T17:10:57.107815"
 }
