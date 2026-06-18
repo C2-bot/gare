@@ -1,16 +1,6 @@
 {
   "gare": [
     {
-      "id": "20260618_Disciplinare-Gara_Non-specificato-nel-documento",
-      "nome_ente": "Non specificato nel documento",
-      "data_elaborazione": "2026-06-18",
-      "valore_appalto": "Non specificato nel documento",
-      "scadenza_procedura": "Non specificato nel documento",
-      "aree_tematiche": "Tecnologia",
-      "campi_compilati": 2,
-      "file": "20260618_Disciplinare-Gara_Non-specificato-nel-documento.json"
-    },
-    {
       "id": "20260605_Disciplinare-Gara_Istituto-Zenale-Butinone",
       "nome_ente": "Istituto Zenale Butinone - Codice meccanografico: BGIS033008",
       "data_elaborazione": "2026-06-18",
