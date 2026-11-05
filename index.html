@@ -1182,9 +1182,9 @@
       <input type="password" id="login-password" placeholder="Inserisci la password">
     </div>
     <div class="field">
-      <label>API Key Anthropic</label>
+      <label>API Key Anthropic (facoltativa)</label>
       <input type="password" id="login-apikey" placeholder="sk-ant-...">
-      <div class="field-hint">Inserisci la chiave una sola volta, viene salvata nel browser.</div>
+      <div class="field-hint">Serve solo per analizzare nuovi PDF da qui. Per consultare l'archivio lascia vuoto.</div>
     </div>
     <button class="btn-primary" id="btn-login">Accedi</button>
     <div class="login-error" id="login-error"></div>
@@ -1241,7 +1241,6 @@
 // ═══════════════════════════════════════════════════
 //  CONFIGURAZIONE
 // ═══════════════════════════════════════════════════
-const APP_PASSWORD = "AnalisiBandi";
 const CLAUDE_MODEL = "claude-sonnet-4-5";
 const CHUNK_SIZE = 35000;
 const NOT_FOUND = "Non specificato nel documento";
@@ -1399,31 +1398,66 @@ document.getElementById("login-apikey").addEventListener("keydown", e => {
   if (e.key === "Enter") doLogin();
 });
 
-function doLogin() {
+// Dati cifrati: senza la password giusta i file online sono illeggibili
+let chiaveDati = null;
+
+function b64Byte(s) { return Uint8Array.from(atob(s), c => c.charCodeAt(0)); }
+
+async function decifra(busta, chiave) {
+  const chiaro = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64Byte(busta.iv) }, chiave, b64Byte(busta.ct));
+  return JSON.parse(new TextDecoder().decode(chiaro));
+}
+
+async function ricavaChiave(password) {
+  const r = await fetch("data/accesso.json", { cache: "no-cache" });
+  if (!r.ok) throw new Error("rete");
+  const a = await r.json();
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+  const chiave = await crypto.subtle.deriveKey(
+    { name: "PBKDF2", salt: b64Byte(a.sale), iterations: a.iterazioni, hash: "SHA-256" },
+    base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  await decifra(a.verifica, chiave);   // password sbagliata: qui fallisce
+  return chiave;
+}
+
+async function leggiCifrato(percorso) {
+  const r = await fetch(percorso, { cache: "no-cache" });
+  if (!r.ok) throw new Error("Archivio non ancora disponibile");
+  return decifra(await r.json(), chiaveDati);
+}
+
+async function doLogin() {
   const password = document.getElementById("login-password").value;
   const apiKey   = document.getElementById("login-apikey").value.trim();
   const errEl    = document.getElementById("login-error");
+  const btn      = document.getElementById("btn-login");
 
   errEl.style.display = "none";
 
-  if (password !== APP_PASSWORD) {
-    errEl.textContent = "Password non valida.";
+  if (apiKey && !apiKey.startsWith("sk-")) {
+    errEl.textContent = "La API key Anthropic inizia con sk-. Se non ce l'hai, lascia il campo vuoto.";
     errEl.style.display = "block";
     return;
   }
 
-  if (!apiKey || !apiKey.startsWith("sk-")) {
-    errEl.textContent = "Inserisci una API key Anthropic valida (inizia con sk-).";
+  btn.disabled = true;
+  try {
+    chiaveDati = await ricavaChiave(password);
+  } catch (e) {
+    errEl.textContent = e.message === "rete" ? "Sito non raggiungibile, riprova." : "Password non valida.";
     errEl.style.display = "block";
     return;
+  } finally {
+    btn.disabled = false;
   }
 
-  state.apiKey = apiKey;
-  localStorage.setItem("c2_apikey", apiKey);
+  state.apiKey = apiKey || null;
+  if (apiKey) localStorage.setItem("c2_apikey", apiKey);
 
   document.getElementById("screen-login").classList.add("hidden");
   document.getElementById("app-shell").classList.remove("hidden");
   mostraUpload();
+  if (!apiKey) switchTab("archivio");
 }
 
 // ═══════════════════════════════════════════════════
@@ -1431,6 +1465,9 @@ function doLogin() {
 // ═══════════════════════════════════════════════════
 document.getElementById("btn-logout").addEventListener("click", () => {
   state.apiKey = null;
+  chiaveDati = null;
+  archivioData = null;
+  archivioCache = {};
   state.storico = [];
   state.corrente = null;
   document.getElementById("app-shell").classList.add("hidden");
@@ -1564,7 +1601,8 @@ async function chiamaApi(testo, blocco, totale) {
     ? `[Blocco ${blocco}/${totale} del documento. Estrai solo le info presenti in questo blocco.]\n\n`
     : "";
 
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
+  if (!state.apiKey) throw new Error("Per analizzare un nuovo PDF serve la API key Anthropic: esci e inseriscila all'accesso.");
+const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -1777,7 +1815,8 @@ async function avviaApprofondimento(garaIdx) {
     const userMessage = `DATI DELLA GARA:\n${riepilogoGara}\n\nPRODOTTI CATALOGO C2 (${numProdotti} prodotti in ${numCategorie} sotto-categorie):\n${testoProdotti}`;
 
     // 4. Chiama Claude
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    if (!state.apiKey) throw new Error("Per analizzare un nuovo PDF serve la API key Anthropic: esci e inseriscila all'accesso.");
+const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -2622,6 +2661,7 @@ function switchTab(tab) {
 }
 
 function estraiChiaveEnte(gara) {
+  if (gara.cig) return gara.cig;
   // Estrai codice meccanografico (es. RMTF090003) dal nome_ente o dall'id
   const testo = (gara.nome_ente || "") + " " + (gara.id || "");
   const match = testo.match(/\b([A-Za-z]{4}\d{5}[A-Za-z0-9])\b/);
@@ -2649,12 +2689,11 @@ async function caricaArchivio() {
 
   try {
     // Carica config score in parallelo con l'indice
-    const [resp] = await Promise.all([
-      fetch("data/index.json"),
+    const [indice] = await Promise.all([
+      leggiCifrato("data/c/indice.bin"),
       caricaScoreConfig(),
     ]);
-    if (!resp.ok) throw new Error("Archivio non ancora disponibile");
-    archivioData = await resp.json();
+    archivioData = indice;
 
     // Deduplica gare: tiene solo la versione più recente per lo stesso ente
     archivioData.gare = deduplicaGare(archivioData.gare);
@@ -2662,8 +2701,7 @@ async function caricaArchivio() {
     // Carica tutti i JSON in parallelo per ricerca full-text
     await Promise.all(archivioData.gare.map(async g => {
       try {
-        const r = await fetch("data/gare/" + g.file);
-        if (r.ok) archivioCache[g.id] = await r.json();
+        archivioCache[g.id] = await leggiCifrato("data/c/" + g.file);
       } catch (_) {}
     }));
 
@@ -2885,7 +2923,7 @@ function mostraArchivioLista() {
     <div class="archive-item ${archivioSelezionato === origIdx ? 'active' : ''}"
          onclick="mostraDettaglioArchivio(${origIdx})">
       <div class="archive-item-name">${escHtml(nomeCorto)}</div>
-      <div class="archive-item-meta">${g.campi_compilati}/23 campi \u00b7 ${g.data_elaborazione}</div>
+      <div class="archive-item-meta">${g.campi_compilati} campi \u00b7 ${g.data_elaborazione}</div>
       ${importoFmt ? `<div class="archive-item-importo">${importoFmt}</div>` : ""}
     </div>`;
   }).join("");
@@ -3027,7 +3065,7 @@ function mostraArchivioOverview() {
     const valoreTag = importoFmt ? `<span class="gara-card-valore">${importoFmt}</span>` : "";
     const isChecked = confrontoSelezione.includes(origIdx);
 
-    const scoreBadge = Object.keys(dati).length > 5 ? renderScoreBadge(dati, true) : "";
+    const scoreBadge = (Object.keys(dati).length > 5 && g.fonte !== "ANAC") ? renderScoreBadge(dati, true) : "";
 
     return `
     <div class="gara-card" onclick="mostraDettaglioArchivio(${origIdx})">
@@ -3041,7 +3079,7 @@ function mostraArchivioOverview() {
       ${lotti && lotti !== NOT_FOUND ? `<div class="gara-card-field"><strong>Lotti:</strong> ${escHtml(lotti.slice(0, 30))}</div>` : ""}
       <div class="gara-card-tags">
         ${valoreTag}
-        <span class="gara-card-badge">${g.campi_compilati}/23 \u00b7 ${g.data_elaborazione}</span>
+        <span class="gara-card-badge">${g.campi_compilati} campi \u00b7 ${g.data_elaborazione}</span>
         ${locTag}
         ${areeTags}
       </div>
@@ -3173,9 +3211,7 @@ async function mostraDettaglioArchivio(idx) {
         <div class="processing-title">Caricamento dati...</div>
       </div>`;
     try {
-      const resp = await fetch("data/gare/" + gara.file);
-      if (!resp.ok) throw new Error("Impossibile caricare i dati della gara");
-      dati = await resp.json();
+      dati = await leggiCifrato("data/c/" + gara.file);
       archivioCache[gara.id] = dati;
     } catch (e) {
       main.innerHTML = `<div class="upload-wrapper"><div class="alert-error">Errore: ${escHtml(e.message)}</div></div>`;
@@ -3208,7 +3244,7 @@ async function mostraDettaglioArchivio(idx) {
   const areeTags = aree.map(a => `<span class="gara-card-area">${a}</span>`).join(" ");
   const locTag = loc ? `<span class="gara-card-localita">${loc.provincia} \u2014 ${loc.regione}</span>` : "";
 
-  const scoreHtml = renderScoreSection(dati);
+  const scoreHtml = gara.fonte === "ANAC" ? "" : renderScoreSection(dati);
 
   main.innerHTML = `
     <div class="results-header">
